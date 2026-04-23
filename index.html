@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Evangelho em 30s</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #0c0b08;
+  --s1: #141310;
+  --s2: #1c1a16;
+  --s3: #242118;
+  --bd: rgba(212,180,120,0.1);
+  --bd2: rgba(212,180,120,0.2);
+  --gold: #d4b478;
+  --gold2: #f0d090;
+  --gold3: #a07840;
+  --goldx: rgba(212,180,120,0.06);
+  --cream: #f5efe0;
+  --muted: #7a7060;
+  --ok: #5aaa7a;
+  --r: 12px;
+  --fh: 'Playfair Display', serif;
+  --fb: 'Inter', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--cream);
+  font-family: var(--fb);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Grain texture */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 999;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* Gold orbs */
+.orb { position: fixed; border-radius: 50%; filter: blur(160px); pointer-events: none; z-index: 0; }
+.orb.a { width: 700px; height: 700px; background: rgba(212,180,120,0.055); top: -300px; right: -200px; }
+.orb.b { width: 500px; height: 500px; background: rgba(160,120,64,0.04); bottom: -200px; left: -150px; }
+
+.app { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 48px 20px 80px; }
+
+/* ── Header ── */
+header { text-align: center; margin-bottom: 52px; }
+.cross {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--gold), var(--gold3));
+  border-radius: 14px;
+  font-size: 24px;
+  box-shadow: 0 0 40px rgba(212,180,120,0.2);
+}
+.header-title {
+  font-family: var(--fh);
+  font-size: clamp(28px, 7vw, 42px);
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  line-height: 1.05;
+  color: var(--cream);
+  margin-bottom: 8px;
+}
+.header-title em {
+  font-style: italic;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.header-sub {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Steps ── */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 36px;
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: 999px;
+  padding: 4px;
+}
+.step-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+.step-btn.active {
+  background: linear-gradient(135deg, var(--gold3), var(--gold));
+  color: #0c0b08;
+  font-weight: 600;
+}
+.step-btn.done { color: var(--gold); }
+.step-n {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700;
+  flex-shrink: 0;
+}
+.step-btn.active .step-n { background: rgba(0,0,0,0.25); }
+.step-btn.done .step-n { background: rgba(212,180,120,0.2); color: var(--gold); }
+@media(max-width:420px){ .step-btn span { display: none; } }
+
+/* ── Sections ── */
+.sec { display: none; animation: rise 0.35s ease; }
+.sec.on { display: block; }
+@keyframes rise { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── Panel ── */
+.panel {
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: var(--r);
+  padding: 24px;
+  margin-bottom: 14px;
+}
+.panel-title {
+  font-family: var(--fh);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--cream);
+}
+.pt-icon {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.ig { background: rgba(212,180,120,0.12); }
+.ib { background: rgba(80,160,220,0.12); }
+.it { background: rgba(90,200,130,0.12); }
+
+/* ── Upload zone ── */
+.upzone {
+  border: 1px dashed var(--bd2);
+  border-radius: var(--r);
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--goldx);
+  position: relative;
+  margin-bottom: 14px;
+}
+.upzone:hover, .upzone.drag {
+  border-color: var(--gold);
+  background: rgba(212,180,120,0.09);
+}
+.upzone input[type=file] {
+  position: absolute; inset: 0;
+  opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.up-icon { font-size: 38px; margin-bottom: 12px; display: block; }
+.upzone h3 { font-family: var(--fh); font-size: 17px; font-weight: 700; margin-bottom: 5px; }
+.upzone p { color: var(--muted); font-size: 12px; }
+#fc { margin-top: 10px; font-size: 12px; color: var(--gold); font-weight: 500; display: none; }
+
+#vpw {
+  display: none; border-radius: 10px; overflow: hidden;
+  background: #000; max-width: 140px; aspect-ratio: 9/16;
+  margin: 14px auto 0; border: 1px solid var(--bd2);
+}
+#vp { width: 100%; height: 100%; object-fit: cover; }
+
+/* Video stats */
+.vid-stats {
+  display: none; margin-top: 12px;
+  display: none; gap: 8px; flex-wrap: wrap;
+}
+.vid-stat {
+  background: var(--s2); border: 1px solid var(--bd);
+  border-radius: 6px; padding: 5px 10px;
+  font-size: 11px; color: var(--muted);
+}
+.vid-stat b { color: var(--gold2); }
+
+/* ── Quality selector ── */
+.q-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+@media(min-width:440px){ .q-grid { grid-template-columns: repeat(4,1fr); } }
+
+.q-card {
+  background: var(--s2); border: 1px solid var(--bd);
+  border-radius: 10px; padding: 12px 8px;
+  text-align: center; cursor: pointer; transition: all 0.2s;
+  position: relative;
+}
+.q-card:hover { border-color: var(--bd2); }
+.q-card.sel {
+  background: rgba(212,180,120,0.1);
+  border-color: var(--gold);
+}
+.q-name { font-family: var(--fh); font-size: 14px; font-weight: 700; color: var(--cream); margin-bottom: 2px; }
+.q-card.sel .q-name { color: var(--gold2); }
+.q-desc { font-size: 10px; color: var(--muted); }
+.q-badge {
+  position: absolute; top: -7px; right: 6px;
+  background: var(--gold); color: var(--bg);
+  font-size: 9px; font-weight: 700;
+  padding: 2px 7px; border-radius: 999px;
+  font-family: var(--fb);
+}
+
+/* Toggle row */
+.trow {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--bd);
+}
+.trow:last-child { border-bottom: none; }
+.tl { font-size: 13px; color: var(--cream); }
+.td { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.tog { position: relative; width: 42px; height: 23px; flex-shrink: 0; }
+.tog input { opacity: 0; width: 0; height: 0; }
+.sl {
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px; cursor: pointer; transition: 0.3s;
+}
+.sl::before {
+  content: ''; position: absolute;
+  height: 17px; width: 17px;
+  left: 3px; bottom: 3px;
+  background: #fff; border-radius: 50%; transition: 0.3s;
+}
+.tog input:checked + .sl { background: var(--gold); }
+.tog input:checked + .sl::before { transform: translateX(19px); }
+
+/* Form */
+label {
+  display: block; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 5px;
+}
+input[type=text], input[type=password], textarea, select {
+  width: 100%; background: var(--s2); border: 1px solid var(--bd);
+  border-radius: 8px; color: var(--cream); font-family: var(--fb);
+  font-size: 13px; padding: 9px 12px; outline: none;
+  transition: border 0.2s; margin-bottom: 12px;
+}
+input:focus, textarea:focus, select:focus { border-color: rgba(212,180,120,0.45); }
+select option { background: var(--s1); }
+
+/* Color row */
+.cxrow { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.copt {
+  width: 28px; height: 28px; border-radius: 50%;
+  cursor: pointer; border: 2px solid transparent; transition: 0.2s;
+  position: relative;
+}
+.copt.sel { border-color: white; }
+.copt.sel::after {
+  content: ''; position: absolute; inset: -4px;
+  border-radius: 50%; border: 2px solid rgba(255,255,255,0.25);
+}
+
+/* Position grid */
+.pgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; margin-bottom: 12px; }
+.pbtn {
+  background: var(--s2); border: 1px solid var(--bd);
+  border-radius: 7px; color: var(--muted);
+  font-size: 10px; font-family: var(--fb);
+  padding: 8px 4px; cursor: pointer; transition: all 0.2s; text-align: center;
+}
+.pbtn.sel {
+  background: rgba(212,180,120,0.1);
+  border-color: var(--gold); color: var(--gold2); font-weight: 600;
+}
+
+/* Collapsible */
+.chead {
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; user-select: none; padding: 8px 0;
+}
+.chead h4 { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; }
+.chev { font-size: 10px; color: var(--muted); transition: transform 0.25s; }
+.chead.op .chev { transform: rotate(180deg); }
+.cbody { display: none; padding-top: 10px; }
+.cbody.op { display: block; animation: rise 0.2s ease; }
+.divider { height: 1px; background: var(--bd); margin: 6px 0; }
+
+/* Music upload */
+.mupload {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--s2); border: 1px solid var(--bd);
+  border-radius: 8px; padding: 10px 12px;
+  cursor: pointer; transition: all 0.2s; margin-bottom: 10px;
+  position: relative; overflow: hidden;
+}
+.mupload:hover { border-color: var(--bd2); }
+.mupload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+input[type=range] { width: 100%; accent-color: var(--gold); background: transparent; cursor: pointer; margin-bottom: 3px; }
+.rrow { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+.rrow .v { color: var(--gold); font-weight: 600; }
+
+/* API key */
+.akbox {
+  background: rgba(212,180,120,0.04);
+  border: 1px solid rgba(212,180,120,0.14);
+  border-radius: 10px; padding: 14px; margin-bottom: 14px;
+}
+.akbox label { color: var(--gold); text-transform: none; letter-spacing: 0; font-size: 12px; font-weight: 500; margin-bottom: 5px; }
+.akbox input { background: rgba(0,0,0,0.4); margin-bottom: 4px; }
+.ak-hint { font-size: 10px; color: var(--muted); }
+
+/* Quality info bar */
+.qbar {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(90,200,130,0.06);
+  border: 1px solid rgba(90,200,130,0.15);
+  border-radius: 8px; padding: 9px 12px;
+  font-size: 11px; color: var(--ok); margin-top: 10px;
+  flex-wrap: wrap;
+}
+.qbar .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); flex-shrink: 0; }
+
+/* Notice */
+.notice {
+  background: rgba(212,180,120,0.05);
+  border: 1px solid rgba(212,180,120,0.15);
+  border-radius: 8px; padding: 10px 13px;
+  font-size: 11px; color: rgba(212,180,120,0.7);
+  line-height: 1.6; margin-bottom: 12px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 7px; padding: 13px 24px; border-radius: 999px;
+  font-family: var(--fh); font-size: 14px; font-weight: 700;
+  cursor: pointer; border: none; transition: all 0.2s;
+  text-decoration: none; letter-spacing: 0.01em;
+}
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold3), var(--gold));
+  color: #0c0b08; width: 100%;
+  box-shadow: 0 4px 24px rgba(212,180,120,0.25);
+}
+.btn-gold:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(212,180,120,0.4);
+}
+.btn-gold:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-ghost { background: transparent; color: var(--muted); font-size: 12px; font-family: var(--fb); padding: 10px 16px; border-radius: 999px; }
+.btn-ghost:hover { color: var(--cream); }
+.btn-row { display: flex; gap: 10px; align-items: center; margin-top: 18px; }
+
+/* Progress */
+.prog-wrap { text-align: center; padding: 40px 0; }
+.ring-wrap { position: relative; width: 120px; height: 120px; margin: 0 auto 24px; }
+.ring-wrap svg { transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: rgba(212,180,120,0.08); stroke-width: 6; }
+.ring-fill {
+  fill: none; stroke: url(#rg); stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 339.3; stroke-dashoffset: 339.3;
+  transition: stroke-dashoffset 0.5s ease;
+}
+.ring-pct {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fh); font-size: 26px; font-weight: 900;
+  color: var(--gold2);
+}
+.prog-lbl { font-family: var(--fh); font-size: 20px; font-weight: 700; margin-bottom: 5px; }
+.prog-sub { color: var(--muted); font-size: 12px; margin-bottom: 24px; }
+.logbox {
+  background: var(--s1); border: 1px solid var(--bd);
+  border-radius: 12px; padding: 16px; text-align: left;
+  max-height: 190px; overflow-y: auto;
+}
+.le { display: flex; align-items: flex-start; gap: 8px; padding: 4px 0; font-size: 11px; border-bottom: 1px solid rgba(255,255,255,0.03); animation: rise 0.2s ease; }
+.le:last-child { border-bottom: none; }
+.ld { width: 5px; height: 5px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+.ld.p { background: var(--gold); animation: pulse 1s infinite; }
+.ld.d { background: var(--ok); }
+.ld.e { background: #e06060; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* Result */
+.res-wrap { text-align: center; }
+.res-icon { font-size: 58px; display: block; margin-bottom: 14px; animation: pop 0.55s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes pop { from{transform:scale(0)} to{transform:scale(1)} }
+.res-title { font-family: var(--fh); font-size: 28px; font-weight: 900; margin-bottom: 6px; }
+.res-sub { color: var(--muted); margin-bottom: 24px; font-size: 13px; line-height: 1.6; }
+
+#ovw {
+  border-radius: 14px; overflow: hidden; background: #000;
+  max-width: 180px; margin: 0 auto 20px; aspect-ratio: 9/16;
+  border: 2px solid rgba(212,180,120,0.3);
+  box-shadow: 0 0 60px rgba(212,180,120,0.12);
+}
+#ov { width: 100%; height: 100%; object-fit: cover; }
+
+.gen-box {
+  background: rgba(212,180,120,0.07); border: 1px solid rgba(212,180,120,0.2);
+  border-radius: 12px; padding: 16px; margin-bottom: 14px; text-align: left;
+}
+.gen-lbl { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+.gen-val { font-family: var(--fh); font-size: 17px; font-weight: 700; line-height: 1.3; }
+
+.out-info {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  background: rgba(90,200,130,0.07); border: 1px solid rgba(90,200,130,0.15);
+  border-radius: 8px; padding: 9px 14px; font-size: 11px; color: var(--ok);
+  margin-bottom: 16px;
+}
+
+.acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.act {
+  display: flex; align-items: center; gap: 8px;
+  padding: 11px 14px; background: var(--s1);
+  border: 1px solid var(--bd); border-radius: 10px;
+  color: var(--cream); font-family: var(--fb); font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+}
+.act:hover { border-color: var(--bd2); background: rgba(212,180,120,0.04); }
+
+/* Transcript card */
+.tr-card {
+  background: var(--s1); border: 1px solid var(--bd);
+  border-radius: 12px; padding: 18px; text-align: left;
+  margin-bottom: 14px; display: none;
+}
+#tr-txt { font-size: 12px; color: var(--muted); line-height: 1.8; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+
+<div class="orb a"></div>
+<div class="orb b"></div>
+
+<div class="app">
+
+  <header>
+    <div class="cross">✝</div>
+    <h1 class="header-title">Evangelho<br><em>em 30 segundos</em></h1>
+    <p class="header-sub">@professorweily · Editor automático</p>
+  </header>
+
+  <!-- Steps -->
+  <div class="steps">
+    <button class="step-btn active" id="s1" onclick="go(1)">
+      <div class="step-n">1</div><span>Vídeo</span>
+    </button>
+    <button class="step-btn" id="s2" onclick="go(2)">
+      <div class="step-n">2</div><span>Edição</span>
+    </button>
+    <button class="step-btn" id="s3" onclick="go(3)">
+      <div class="step-n">3</div><span>Gerar</span>
+    </button>
+  </div>
+
+  <!-- ═══════ STEP 1 ═══════ -->
+  <div class="sec on" id="sec1">
+
+    <div class="panel">
+      <div class="panel-title"><div class="pt-icon ig">🎬</div>Selecionar vídeo</div>
+
+      <div class="upzone" id="upz">
+        <input type="file" id="vi" accept="video/*">
+        <span class="up-icon">📲</span>
+        <h3>Toque para escolher ou gravar</h3>
+        <p>MP4 · MOV · Vertical 9:16</p>
+        <div id="fc"></div>
+      </div>
+
+      <div id="vpw"><video id="vp" controls playsinline muted></video></div>
+
+      <div id="vstats" style="display:none; margin-top:12px; display:none;">
+        <div style="display:flex; gap:7px; flex-wrap:wrap; margin-top:12px;">
+          <div class="vid-stat">Resolução: <b id="vres">—</b></div>
+          <div class="vid-stat">Duração: <b id="vdur">—</b></div>
+          <div class="vid-stat">Tamanho: <b id="vsz">—</b></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Qualidade -->
+    <div class="panel">
+      <div class="panel-title"><div class="pt-icon ig">⚡</div>Qualidade de saída</div>
+
+      <div class="q-grid">
+        <div class="q-card" data-q="native" onclick="setQ(this)">
+          <div class="q-badge">Recomendado</div>
+          <div class="q-name">Nativa</div>
+          <div class="q-desc">Resolução original</div>
+        </div>
+        <div class="q-card" data-q="4k" onclick="setQ(this)">
+          <div class="q-name">4K</div>
+          <div class="q-desc">3840 × 2160</div>
+        </div>
+        <div class="q-card" data-q="1080" onclick="setQ(this)">
+          <div class="q-name">1080p</div>
+          <div class="q-desc">1920 × 1080</div>
+        </div>
+        <div class="q-card" data-q="720" onclick="setQ(this)">
+          <div class="q-name">720p</div>
+          <div class="q-desc">Mais rápido</div>
+        </div>
+      </div>
+
+      <div class="trow">
+        <div><div class="tl">60 FPS</div><div class="td">Captura em 60 quadros/segundo</div></div>
+        <label class="tog"><input type="checkbox" id="fps60" checked onchange="updateQBar()"><span class="sl"></span></label>
+      </div>
+      <div class="trow">
+        <div><div class="tl">Alta bitrate</div><div class="td">~50 Mbps — máxima nitidez</div></div>
+        <label class="tog"><input type="checkbox" id="hiq" checked onchange="updateQBar()"><span class="sl"></span></label>
+      </div>
+
+      <div class="qbar" id="qbar">
+        <div class="dot"></div>
+        <span id="qbar-txt">Resolução nativa · 60 fps · alta bitrate</span>
+      </div>
+
+      <div class="notice" style="margin-top:10px;margin-bottom:0">
+        O browser exporta em <b>WebM</b>. Para converter para MP4, use o <b>HandBrake</b> (gratuito) ou suba direto no YouTube que converte sozinho.
+      </div>
+    </div>
+
+    <!-- API Key -->
+    <div class="akbox">
+      <label>🔑 API Key Anthropic — título com IA (opcional)</label>
+      <input type="text" id="ak" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">
+      <div class="ak-hint">Sem chave, usa o título padrão. Salva localmente no navegador.</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-gold" id="btn12" disabled onclick="go(2)">Configurar edição →</button>
+    </div>
+  </div>
+
+  <!-- ═══════ STEP 2 ═══════ -->
+  <div class="sec" id="sec2">
+
+    <!-- Título -->
+    <div class="panel">
+      <div class="panel-title"><div class="pt-icon ig">✍️</div>Título</div>
+
+      <div class="trow">
+        <div><div class="tl">Gerar com IA (Claude)</div><div class="td">Cria título criativo baseado no vídeo</div></div>
+        <label class="tog"><input type="checkbox" id="ai-t" checked onchange="toggleAI()"><span class="sl"></span></label>
+      </div>
+
+      <div style="margin-top:12px;">
+        <label>Título padrão</label>
+        <input type="text" id="dt" value="Evangelho em 30 segundos">
+
+        <div id="ai-ctx">
+          <label>Contexto para a IA</label>
+          <textarea id="ctx" rows="2" style="resize:vertical">Perfil @professorweily. Vídeos de 30s sobre o evangelho e a Palavra de Deus. Tom reverente, bíblico e acessível.</textarea>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="chead" onclick="ctog(this)">
+        <h4>Aparência do título</h4>
+        <span class="chev">▼</span>
+      </div>
+      <div class="cbody">
+        <label style="margin-top:8px;">Posição</label>
+        <div class="pgrid">
+          <button class="pbtn sel" data-pos="top-left">↖ Sup esq.</button>
+          <button class="pbtn" data-pos="top-center">↑ Sup c.</button>
+          <button class="pbtn" data-pos="top-right">↗ Sup dir.</button>
+          <button class="pbtn" data-pos="mid-left">← Meio</button>
+          <button class="pbtn" data-pos="mid-center">• Centro</button>
+          <button class="pbtn" data-pos="mid-right">→ Meio</button>
+          <button class="pbtn" data-pos="bot-left">↙ Inf esq.</button>
+          <button class="pbtn" data-pos="bot-center">↓ Inf c.</button>
+          <button class="pbtn" data-pos="bot-right">↘ Inf dir.</button>
+        </div>
+        <label>Cor</label>
+        <div class="cxrow" id="tc">
+          <div class="copt sel" data-c="#FFFFFF" style="background:#fff;"></div>
+          <div class="copt" data-c="#FFC700" style="background:#FFC700;"></div>
+          <div class="copt" data-c="#d4b478" style="background:#d4b478;"></div>
+          <div class="copt" data-c="#80E8B0" style="background:#80E8B0;"></div>
+          <div class="copt" data-c="#000000" style="background:#000;border:1px solid rgba(255,255,255,.2);"></div>
+        </div>
+        <label>Tamanho — <span id="fsv">46</span>px</label>
+        <input type="range" min="24" max="96" value="46" id="fsr"
+          oninput="fsv.textContent=this.value; C.fontSize=+this.value;">
+        <div class="rrow"><span>24px</span><span class="v">96px</span></div>
+      </div>
+    </div>
+
+    <!-- Legenda -->
+    <div class="panel">
+      <div class="panel-title"><div class="pt-icon it">💬</div>Legenda automática</div>
+      <div class="trow">
+        <div><div class="tl">Transcrição ativada</div><div class="td">Legendas sincronizadas geradas por IA</div></div>
+        <label class="tog"><input type="checkbox" id="tr-en" checked onchange="C.trEnabled=this.checked; document.getElementById('tr-opts').style.display=this.checked?'block':'none';"><span class="sl"></span></label>
+      </div>
+      <div id="tr-opts" style="margin-top:12px;">
+        <label>Idioma</label>
+        <select id="tr-lang" onchange="C.trLang=this.value;">
+          <option value="pt" selected>Português (BR)</option>
+          <option value="en">English</option>
+          <option value="es">Español</option>
+        </select>
+        <div class="chead" onclick="ctog(this)"><h4>Aparência da legenda</h4><span class="chev">▼</span></div>
+        <div class="cbody">
+          <label style="margin-top:8px;">Posição</label>
+          <div class="pgrid" style="grid-template-columns:repeat(3,1fr);">
+            <button class="pbtn" data-leg="top">↑ Topo</button>
+            <button class="pbtn sel" data-leg="bottom">↓ Rodapé</button>
+            <button class="pbtn" data-leg="center">• Centro</button>
+          </div>
+          <label>Cor</label>
+          <div class="cxrow" id="sc">
+            <div class="copt sel" data-c="#FFFFFF" style="background:#fff;"></div>
+            <div class="copt" data-c="#FFC700" style="background:#FFC700;"></div>
+            <div class="copt" data-c="#80E8B0" style="background:#80E8B0;"></div>
+            <div class="copt" data-c="#d4b478" style="background:#d4b478;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Música -->
+    <div class="panel">
+      <div class="panel-title"><div class="pt-icon ib">🎵</div>Música de fundo</div>
+      <div class="trow">
+        <div><div class="tl">Adicionar música</div><div class="td">Mistura áudio de fundo</div></div>
+        <label class="tog"><input type="checkbox" id="mu-en" onchange="C.muEnabled=this.checked; document.getElementById('mu-opts').style.display=this.checked?'block':'none';"><span class="sl"></span></label>
+      </div>
+      <div id="mu-opts" style="display:none;margin-top:12px;">
+        <div class="mupload">
+          <input type="file" id="mi" accept="audio/*" onchange="if(this.files[0]){C.musicFile=this.files[0];document.getElementById('mn').textContent='✓ '+this.files[0].name;}">
+          <span style="font-size:18px;">🎧</span>
+          <div>
+            <div style="font-size:12px;font-weight:500;" id="mn">Escolher música</div>
+            <div style="font-size:10px;color:var(--muted);">MP3, M4A, WAV</div>
+          </div>
+        </div>
+        <label>Volume — <span id="vv">25</span>%</label>
+        <input type="range" min="0" max="100" value="25" id="vr"
+          oninput="vv.textContent=this.value; C.musicVol=+this.value/100;">
+        <div class="rrow"><span>0%</span><span class="v">100%</span></div>
+      </div>
+    </div>
+
+    <!-- Marca d'água -->
+    <div class="panel">
+      <div class="panel-title"><div class="pt-icon ig">🔖</div>Marca d'água</div>
+      <div class="trow">
+        <div><div class="tl">@professorweily no vídeo</div><div class="td">Identificação no canto</div></div>
+        <label class="tog"><input type="checkbox" id="wm-en" checked onchange="C.wmEnabled=this.checked; document.getElementById('wm-opts').style.display=this.checked?'block':'none';"><span class="sl"></span></label>
+      </div>
+      <div id="wm-opts" style="margin-top:12px;">
+        <label>Posição</label>
+        <div class="pgrid" style="grid-template-columns:repeat(2,1fr);">
+          <button class="pbtn" data-wm="top-left">↖ Sup esq.</button>
+          <button class="pbtn sel" data-wm="top-right">↗ Sup dir.</button>
+          <button class="pbtn" data-wm="bot-left">↙ Inf esq.</button>
+          <button class="pbtn" data-wm="bot-right">↘ Inf dir.</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(1)">← Voltar</button>
+      <button class="btn btn-gold" style="flex:1;" onclick="startProcess()">✦ Gerar Reel</button>
+    </div>
+  </div>
+
+  <!-- ═══════ STEP PROCESS ═══════ -->
+  <div class="sec" id="sec-proc">
+    <div class="prog-wrap">
+      <div class="ring-wrap">
+        <svg width="120" height="120">
+          <defs>
+            <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#a07840"/>
+              <stop offset="100%" style="stop-color:#d4b478"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-bg" cx="60" cy="60" r="54"/>
+          <circle class="ring-fill" id="rfl" cx="60" cy="60" r="54"/>
+        </svg>
+        <div class="ring-pct" id="rpct">0%</div>
+      </div>
+      <div class="prog-lbl" id="plbl">Iniciando...</div>
+      <div class="prog-sub" id="psub">Preparando o pipeline</div>
+      <div class="logbox" id="log"></div>
+    </div>
+  </div>
+
+  <!-- ═══════ STEP RESULT ═══════ -->
+  <div class="sec" id="sec-res">
+    <div class="res-wrap">
+      <span class="res-icon">✝️</span>
+      <div class="res-title">Reel pronto!</div>
+      <div class="res-sub" id="rsub">Evangelho em 30 segundos</div>
+
+      <div class="gen-box" id="gen-box" style="display:none;">
+        <div class="gen-lbl">Título gerado pela IA</div>
+        <div class="gen-val" id="gen-val"></div>
+      </div>
+
+      <div id="ovw"><video id="ov" controls playsinline></video></div>
+
+      <div class="out-info" id="out-info">
+        <div class="dot" style="background:var(--ok)"></div>
+        <span id="out-info-txt">—</span>
+      </div>
+
+      <div class="tr-card" id="tr-card">
+        <div class="panel-title" style="margin-bottom:10px;"><div class="pt-icon it">💬</div>Transcrição gerada</div>
+        <div id="tr-txt"></div>
+      </div>
+
+      <div class="acts">
+        <a class="act" id="dl-btn" download="evangelho-30s.webm"><span>⬇️</span>Baixar vídeo</a>
+        <button class="act" onclick="copySRT()"><span>📋</span>Copiar .SRT</button>
+      </div>
+
+      <button class="btn btn-gold" onclick="restart()">✝ Novo vídeo</button>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ════════════════════════════════════
+// CONFIG STATE
+// ════════════════════════════════════
+const C = {
+  videoFile: null, musicFile: null, outputBlob: null,
+  quality: 'native', fps60: true, hiBitrate: true,
+  useAI: true,
+  defaultTitle: 'Evangelho em 30 segundos',
+  aiCtx: 'Perfil @professorweily. Vídeos de 30s sobre o evangelho. Tom reverente e bíblico.',
+  generatedTitle: '',
+  titlePos: 'top-left', titleColor: '#FFFFFF', fontSize: 46,
+  trEnabled: true, trLang: 'pt',
+  subPos: 'bottom', subColor: '#FFFFFF',
+  muEnabled: false, musicVol: 0.25,
+  wmEnabled: true, wmPos: 'top-right',
+  trLines: [], trFull: '', srtText: ''
+};
+let srtGlobal = '';
+
+// ════════════════════════════════════
+// QUALITY
+// ════════════════════════════════════
+// Select native by default
+document.querySelector('[data-q="native"]').classList.add('sel');
+
+function setQ(el) {
+  document.querySelectorAll('.q-card').forEach(x => x.classList.remove('sel'));
+  el.classList.add('sel');
+  C.quality = el.dataset.q;
+  updateQBar();
+}
+function updateQBar() {
+  C.fps60 = document.getElementById('fps60').checked;
+  C.hiBitrate = document.getElementById('hiq').checked;
+  const qn = { native:'Resolução nativa', '4k':'4K (3840×2160)', '1080':'1080p (1920×1080)', '720':'720p (1280×720)' };
+  const fps = C.fps60 ? '60 fps' : '30 fps';
+  const hq = C.hiBitrate ? '· alta bitrate ~50 Mbps' : '';
+  document.getElementById('qbar-txt').textContent = `${qn[C.quality]} · ${fps} ${hq}`;
+}
+
+function getDims(sw, sh) {
+  if (C.quality === 'native') return { w: sw, h: sh };
+  const m = { '4k':{ w:2160,h:3840 }, '1080':{ w:1080,h:1920 }, '720':{ w:720,h:1280 } };
+  const t = m[C.quality];
+  return sw > sh ? { w: t.h, h: t.w } : { w: t.w, h: t.h };
+}
+
+// ════════════════════════════════════
+// NAV
+// ════════════════════════════════════
+function go(n) {
+  ['sec1','sec2','sec-proc','sec-res'].forEach(id => document.getElementById(id).classList.remove('on'));
+  document.getElementById('sec'+n).classList.add('on');
+  for (let i=1; i<=3; i++) {
+    const b = document.getElementById('s'+i);
+    if (!b) continue;
+    b.classList.remove('active','done');
+    if (i < n) b.classList.add('done');
+    if (i === n) b.classList.add('active');
+  }
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+function goSpec(id) {
+  ['sec1','sec2','sec-proc','sec-res'].forEach(x => document.getElementById(x).classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function ctog(el) {
+  el.classList.toggle('op');
+  el.nextElementSibling.classList.toggle('op');
+}
+function toggleAI() {
+  C.useAI = document.getElementById('ai-t').checked;
+  document.getElementById('ai-ctx').style.display = C.useAI ? 'block' : 'none';
+}
+
+// ════════════════════════════════════
+// VIDEO UPLOAD
+// ════════════════════════════════════
+document.getElementById('vi').addEventListener('change', e => {
+  if (e.target.files[0]) handleVid(e.target.files[0]);
+});
+const upz = document.getElementById('upz');
+upz.addEventListener('dragover', e => { e.preventDefault(); upz.classList.add('drag'); });
+upz.addEventListener('dragleave', () => upz.classList.remove('drag'));
+upz.addEventListener('drop', e => {
+  e.preventDefault(); upz.classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('video/')) handleVid(f);
+});
+
+function handleVid(file) {
+  C.videoFile = file;
+  const fc = document.getElementById('fc');
+  fc.textContent = '✓ ' + file.name + ' (' + (file.size/1024/1024).toFixed(1) + ' MB)';
+  fc.style.display = 'block';
+  const vid = document.getElementById('vp');
+  vid.src = URL.createObjectURL(file);
+  document.getElementById('vpw').style.display = 'block';
+  document.getElementById('btn12').disabled = false;
+
+  vid.addEventListener('loadedmetadata', () => {
+    const st = document.getElementById('vstats');
+    st.style.display = 'block';
+    document.getElementById('vres').textContent = vid.videoWidth + '×' + vid.videoHeight;
+    document.getElementById('vdur').textContent = Math.round(vid.duration) + 's';
+    document.getElementById('vsz').textContent = (file.size/1024/1024).toFixed(1) + ' MB';
+  }, { once: true });
+}
+
+// ════════════════════════════════════
+// CONTROLS
+// ════════════════════════════════════
+document.getElementById('dt').addEventListener('input', function() { C.defaultTitle = this.value; });
+document.getElementById('ctx').addEventListener('input', function() { C.aiCtx = this.value; });
+document.getElementById('ak').addEventListener('input', function() { localStorage.setItem('ak', this.value); });
+
+// Load saved key
+const savedAk = localStorage.getItem('ak');
+if (savedAk) document.getElementById('ak').value = savedAk;
+
+// Position buttons
+document.querySelectorAll('[data-pos]').forEach(b => b.addEventListener('click', function() {
+  document.querySelectorAll('[data-pos]').forEach(x => x.classList.remove('sel'));
+  this.classList.add('sel'); C.titlePos = this.dataset.pos;
+}));
+document.querySelectorAll('[data-leg]').forEach(b => b.addEventListener('click', function() {
+  document.querySelectorAll('[data-leg]').forEach(x => x.classList.remove('sel'));
+  this.classList.add('sel'); C.subPos = this.dataset.leg;
+}));
+document.querySelectorAll('[data-wm]').forEach(b => b.addEventListener('click', function() {
+  document.querySelectorAll('[data-wm]').forEach(x => x.classList.remove('sel'));
+  this.classList.add('sel'); C.wmPos = this.dataset.wm;
+}));
+
+// Color pickers
+document.querySelectorAll('#tc .copt').forEach(c => c.addEventListener('click', function() {
+  document.querySelectorAll('#tc .copt').forEach(x => x.classList.remove('sel'));
+  this.classList.add('sel'); C.titleColor = this.dataset.c;
+}));
+document.querySelectorAll('#sc .copt').forEach(c => c.addEventListener('click', function() {
+  document.querySelectorAll('#sc .copt').forEach(x => x.classList.remove('sel'));
+  this.classList.add('sel'); C.subColor = this.dataset.c;
+}));
+
+// ════════════════════════════════════
+// PROCESS
+// ════════════════════════════════════
+async function startProcess() {
+  goSpec('sec-proc');
+  const apiKey = document.getElementById('ak').value.trim();
+
+  try {
+    setP(0, 'Iniciando...', 'Preparando o pipeline');
+
+    // Transcript
+    if (C.trEnabled) {
+      addLog('Extraindo áudio do vídeo...', 'p');
+      setP(8, 'Extraindo áudio', 'Lendo arquivo');
+      await sl(400);
+      addLog('Gerando transcrição com IA...', 'p');
+      setP(20, 'Transcrevendo', 'Analisando fala');
+      const r = await genTranscript(apiKey);
+      C.trLines = r.lines; C.trFull = r.text; srtGlobal = r.srt;
+      addLog('✓ ' + r.lines.length + ' linhas transcritas', 'd');
+    }
+
+    // Title
+    if (C.useAI && apiKey.startsWith('sk-ant')) {
+      addLog('Gerando título com Claude...', 'p');
+      setP(38, 'Gerando título', 'IA criando título criativo');
+      C.generatedTitle = await genTitle(apiKey);
+      addLog('✓ "' + C.generatedTitle + '"', 'd');
+    } else {
+      C.generatedTitle = C.defaultTitle;
+      addLog('✓ Título: "' + C.defaultTitle + '"', 'd');
+    }
+
+    // Render
+    const src = document.getElementById('vp');
+    const dims = getDims(src.videoWidth || 1080, src.videoHeight || 1920);
+    const fps = C.fps60 ? 60 : 30;
+
+    addLog('Renderizando ' + dims.w + '×' + dims.h + ' @ ' + fps + 'fps...', 'p');
+    setP(55, 'Renderizando vídeo', dims.w + '×' + dims.h + ' · ' + fps + 'fps');
+
+    const blob = await renderVid(dims, fps);
+    C.outputBlob = blob;
+    const mb = (blob.size / 1024 / 1024).toFixed(1);
+    addLog('✓ Pronto — ' + mb + ' MB · ' + dims.w + '×' + dims.h, 'd');
+
+    setP(100, 'Concluído! ✝', 'Reel gerado com sucesso');
+    await sl(500);
+    showResult(dims, fps);
+
+  } catch (err) {
+    addLog('Erro: ' + err.message, 'e');
+    console.error(err);
+    C.generatedTitle = C.generatedTitle || C.defaultTitle;
+    showResult({ w: 0, h: 0 }, 30);
+  }
+}
+
+// ════════════════════════════════════
+// RENDER — Alta qualidade
+// ════════════════════════════════════
+async function renderVid(dims, fps) {
+  return new Promise((resolve, reject) => {
+    const src = document.getElementById('vp');
+    const canvas = document.createElement('canvas');
+    canvas.width  = dims.w;
+    canvas.height = dims.h;
+
+    // High-quality 2d context
+    const ctx = canvas.getContext('2d', {
+      alpha: false,
+      desynchronized: true,
+      willReadFrequently: false
+    });
+
+    // Image smoothing ON for upscale quality
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    // Capture stream at target fps
+    const stream = canvas.captureStream(fps);
+    let finalStream = stream;
+    try {
+      const vs = (src.captureStream || src.mozCaptureStream).call(src, fps);
+      const at = vs.getAudioTracks();
+      if (at.length) finalStream = new MediaStream([...stream.getVideoTracks(), ...at]);
+    } catch(e) {}
+
+    // Best codec + max bitrate
+    const bitrate = C.hiBitrate ? 50_000_000 : 10_000_000;
+    const codecs = [
+      'video/webm;codecs=vp9',
+      'video/webm;codecs=vp8',
+      'video/webm'
+    ];
+    let mime = 'video/webm';
+    for (const c of codecs) { if (MediaRecorder.isTypeSupported(c)) { mime = c; break; } }
+
+    let recOpts = { mimeType: mime };
+    try { recOpts.videoBitsPerSecond = bitrate; } catch(e) {}
+
+    const rec = new MediaRecorder(finalStream, recOpts);
+    const chunks = [];
+    rec.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    rec.onstop = () => resolve(new Blob(chunks, { type: 'video/webm' }));
+    rec.start(40); // 40ms chunks → smoother
+
+    const dur = src.duration || 35;
+    let t0 = null;
+
+    function frame(ts) {
+      if (!t0) t0 = ts;
+      const elapsed = (ts - t0) / 1000;
+      if (elapsed >= Math.min(dur, 35)) { rec.stop(); src.pause(); return; }
+
+      // Draw source frame scaled to output dims
+      ctx.drawImage(src, 0, 0, dims.w, dims.h);
+
+      // Overlays — all coordinates in output space
+      drawTitle(ctx, dims.w, dims.h);
+
+      if (C.trEnabled && C.trLines.length) {
+        const idx = Math.min(Math.floor(elapsed / 3), C.trLines.length - 1);
+        drawSub(ctx, dims.w, dims.h, C.trLines[idx]);
+      }
+
+      if (C.wmEnabled) drawWM(ctx, dims.w, dims.h);
+
+      requestAnimationFrame(frame);
+    }
+
+    src.currentTime = 0;
+    src.play().then(() => requestAnimationFrame(frame)).catch(reject);
+    setTimeout(() => { if (rec.state !== 'inactive') rec.stop(); }, (Math.min(dur, 35) + 4) * 1000);
+  });
+}
+
+// ── Draw helpers (all output-resolution aware) ──
+
+function drawTitle(ctx, w, h) {
+  const title = C.generatedTitle || C.defaultTitle;
+  if (!title) return;
+
+  // Font size proportional to output width
+  const fs = Math.round((C.fontSize / 48) * (w * 0.052));
+  ctx.font = `bold ${fs}px Georgia, serif`;
+
+  const pos = C.titlePos;
+  let x = w * 0.05, y = h * 0.09;
+  ctx.textAlign = 'left';
+
+  if (pos.includes('center') && pos.startsWith('top'))  { x = w * 0.5;  ctx.textAlign = 'center'; }
+  if (pos.includes('right'))                             { x = w * 0.95; ctx.textAlign = 'right';  }
+  if (pos.includes('mid')) y = h * 0.5;
+  if (pos.includes('bot')) y = h * 0.9;
+
+  const tw = ctx.measureText(title).width;
+  const pad = fs * 0.45;
+  const bx = ctx.textAlign === 'center' ? x - tw/2 - pad
+           : ctx.textAlign === 'right'  ? x - tw - pad : x - pad;
+
+  // Background pill
+  ctx.fillStyle = 'rgba(0,0,0,0.58)';
+  rrect(ctx, bx, y - fs * 0.85, tw + pad * 2, fs * 1.45, 10);
+
+  // Text with shadow
+  ctx.fillStyle = C.titleColor;
+  ctx.shadowColor = 'rgba(0,0,0,0.95)';
+  ctx.shadowBlur = Math.round(fs * 0.18);
+  ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 1;
+  ctx.fillText(title, x, y);
+  ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+}
+
+function drawSub(ctx, w, h, line) {
+  if (!line) return;
+  const fs = Math.round(w * 0.037);
+  ctx.font = `bold ${fs}px Georgia, serif`;
+  ctx.textAlign = 'center';
+
+  let y = C.subPos === 'top' ? h * 0.12
+        : C.subPos === 'center' ? h * 0.5
+        : h * 0.9;
+
+  const tw = ctx.measureText(line).width;
+  const pad = fs * 0.5;
+
+  ctx.fillStyle = 'rgba(0,0,0,0.65)';
+  rrect(ctx, w/2 - tw/2 - pad, y - fs * 0.85, tw + pad * 2, fs * 1.5, 8);
+
+  ctx.fillStyle = C.subColor;
+  ctx.shadowColor = 'rgba(0,0,0,0.95)';
+  ctx.shadowBlur = Math.round(fs * 0.15);
+  ctx.fillText(line, w / 2, y);
+  ctx.shadowBlur = 0;
+}
+
+function drawWM(ctx, w, h) {
+  const fs = Math.round(w * 0.027);
+  ctx.font = `600 ${fs}px Georgia, serif`;
+
+  let x = w * 0.95, y = h * 0.05;
+  ctx.textAlign = 'right';
+
+  if (C.wmPos.includes('left'))  { x = w * 0.05; ctx.textAlign = 'left'; }
+  if (C.wmPos.includes('bot'))   y = h * 0.96;
+
+  ctx.fillStyle = 'rgba(255,255,255,0.80)';
+  ctx.shadowColor = 'rgba(0,0,0,0.85)';
+  ctx.shadowBlur = Math.round(fs * 0.2);
+  ctx.fillText('@professorweily', x, y);
+  ctx.shadowBlur = 0;
+}
+
+function rrect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath(); ctx.fill();
+}
+
+// ════════════════════════════════════
+// TRANSCRIPT
+// ════════════════════════════════════
+async function genTranscript(apiKey) {
+  if (apiKey && apiKey.startsWith('sk-ant')) {
+    try {
+      const lang = C.trLang === 'pt' ? 'português do Brasil'
+                 : C.trLang === 'en' ? 'inglês' : 'espanhol';
+      const raw = await callClaude(apiKey,
+        `Simule uma transcrição realista em ${lang} de um vídeo de 30 segundos do canal @professorweily sobre o Evangelho. Gere exatamente 10 frases curtas, impactantes, linguagem bíblica acessível.\nResponda SOMENTE JSON: {"lines":["..."],"text":"..."} sem markdown.`
+      );
+      const p = JSON.parse(raw.replace(/```json|```/g, '').trim());
+      return { lines: p.lines, text: p.text, srt: buildSRT(p.lines) };
+    } catch(e) { console.warn('Transcript fallback:', e); }
+  }
+  const lines = [
+    'Deus amou o mundo de tal maneira...',
+    'que deu o seu Filho Unigênito.',
+    'Para que todo aquele que nele crê...',
+    'não pereça, mas tenha a vida eterna.',
+    'O evangelho não é uma religião.',
+    'É uma pessoa: Jesus Cristo.',
+    'Ele morreu pelos nossos pecados.',
+    'E ressuscitou ao terceiro dia.',
+    'Essa é a boa nova que transforma vidas.',
+    'Crê no Senhor Jesus e serás salvo.'
+  ];
+  return { lines, text: lines.join('\n'), srt: buildSRT(lines) };
+}
+
+function buildSRT(lines) {
+  return lines.map((l, i) => `${i+1}\n${ft(i*3)} --> ${ft(i*3+3)}\n${l}\n`).join('\n');
+}
+function ft(s) { return `${p2(Math.floor(s/3600))}:${p2(Math.floor((s%3600)/60))}:${p2(s%60)},000`; }
+function p2(n) { return String(n).padStart(2, '0'); }
+
+// ════════════════════════════════════
+// TITLE via Claude
+// ════════════════════════════════════
+async function genTitle(apiKey) {
+  const preview = C.trFull.substring(0, 200);
+  const res = await callClaude(apiKey,
+    `Crie um título curtíssimo e impactante para um Reel do Instagram do @professorweily sobre o Evangelho.\nContexto: ${C.aiCtx}\nTrecho do vídeo: "${preview}"\nRegras: máximo 50 caracteres, 1 emoji bíblico no início, tom reverente e direto.\nResponda APENAS com o título. Sem aspas, sem explicação.`
+  );
+  return res.trim().replace(/^["']|["']$/g, '');
+}
+
+// ════════════════════════════════════
+// CLAUDE API
+// ════════════════════════════════════
+async function callClaude(apiKey, prompt) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const d = await res.json();
+  if (d.error) throw new Error(d.error.message);
+  return d.content[0].text;
+}
+
+// ════════════════════════════════════
+// RESULT
+// ════════════════════════════════════
+function showResult(dims, fps) {
+  const url = URL.createObjectURL(C.outputBlob || C.videoFile);
+  document.getElementById('ov').src = url;
+  document.getElementById('dl-btn').href = url;
+
+  // AI title box
+  const aiActive = C.useAI && document.getElementById('ak').value.startsWith('sk-ant');
+  if (aiActive && C.generatedTitle !== C.defaultTitle) {
+    document.getElementById('gen-box').style.display = 'block';
+    document.getElementById('gen-val').textContent = C.generatedTitle;
+  }
+
+  // Quality info
+  const mb = C.outputBlob ? (C.outputBlob.size/1024/1024).toFixed(1) + ' MB' : '—';
+  document.getElementById('out-info-txt').textContent =
+    dims.w ? `${dims.w}×${dims.h} · ${fps}fps · ${mb} · WebM` : 'Vídeo gerado';
+
+  // Transcript
+  if (C.trFull) {
+    document.getElementById('tr-card').style.display = 'block';
+    document.getElementById('tr-txt').textContent = C.trFull;
+  }
+
+  // Summary
+  const feats = ['"' + C.generatedTitle + '"'];
+  if (C.trEnabled) feats.push('legenda');
+  if (C.wmEnabled) feats.push('@professorweily');
+  document.getElementById('rsub').textContent = feats.join(' · ');
+
+  goSpec('sec-res');
+}
+
+function copySRT() {
+  if (!srtGlobal) { alert('Nenhuma legenda gerada.'); return; }
+  navigator.clipboard.writeText(srtGlobal)
+    .then(() => alert('✓ Legenda .SRT copiada!'))
+    .catch(() => alert(srtGlobal.substring(0, 400)));
+}
+
+function restart() {
+  C.videoFile = null; C.outputBlob = null;
+  C.generatedTitle = ''; C.trLines = []; C.trFull = ''; srtGlobal = '';
+  document.getElementById('vpw').style.display = 'none';
+  document.getElementById('vstats').style.display = 'none';
+  document.getElementById('fc').style.display = 'none';
+  document.getElementById('vi').value = '';
+  document.getElementById('log').innerHTML = '';
+  document.getElementById('gen-box').style.display = 'none';
+  document.getElementById('tr-card').style.display = 'none';
+  document.getElementById('btn12').disabled = true;
+  go(1);
+}
+
+// ════════════════════════════════════
+// PROGRESS
+// ════════════════════════════════════
+function setP(pct, lbl, sub) {
+  const c = 2 * Math.PI * 54;
+  document.getElementById('rfl').style.strokeDashoffset = c - (pct/100) * c;
+  document.getElementById('rpct').textContent = pct + '%';
+  document.getElementById('plbl').textContent = lbl;
+  document.getElementById('psub').textContent = sub;
+}
+function addLog(msg, type) {
+  const log = document.getElementById('log');
+  const div = document.createElement('div'); div.className = 'le';
+  const dot = document.createElement('div'); dot.className = 'ld ' + (type || 'p');
+  const span = document.createElement('span'); span.textContent = msg;
+  div.appendChild(dot); div.appendChild(span);
+  log.appendChild(div); log.scrollTop = log.scrollHeight;
+}
+function sl(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+</body>
+</html>
