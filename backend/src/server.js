@@ -3,6 +3,7 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 
 require('./db'); // garante que o schema exista antes de servir requisições
 
@@ -16,9 +17,28 @@ const leadsRoutes = require('./routes/leads');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
+const CORS_ORIGIN = process.env.CORS_ORIGIN;
+const FORCE_HTTPS = process.env.FORCE_HTTPS === 'true';
 
-app.use(cors({ origin: CORS_ORIGIN }));
+// Necessário para que req.secure / x-forwarded-proto sejam confiáveis atrás de
+// um proxy/load balancer que termina o TLS (Railway, Render, Nginx, etc.).
+app.set('trust proxy', 1);
+
+app.use(helmet());
+
+if (FORCE_HTTPS) {
+  app.use((req, res, next) => {
+    if (req.secure || req.headers['x-forwarded-proto'] === 'https') return next();
+    return res.redirect(301, `https://${req.headers.host}${req.originalUrl}`);
+  });
+}
+
+// Frontend e backend são servidos pela mesma origem, então CORS cross-origin
+// só é necessário se CORS_ORIGIN for definido explicitamente (ex.: um front
+// hospedado em outro domínio). Sem essa variável, requisições cross-origin
+// são bloqueadas por padrão.
+app.use(cors(CORS_ORIGIN ? { origin: CORS_ORIGIN.split(',').map((o) => o.trim()) } : { origin: false }));
+
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
