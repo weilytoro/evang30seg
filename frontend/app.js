@@ -48,6 +48,8 @@ const userAvatar = document.getElementById('user-avatar');
 const userName = document.getElementById('user-name');
 const userRole = document.getElementById('user-role');
 const logoutBtn = document.getElementById('logout-btn');
+const verifyBanner = document.getElementById('verify-banner');
+const resendVerificationLink = document.getElementById('resend-verification-link');
 
 const modalTitle = document.getElementById('modal-title');
 const modalSub = document.getElementById('modal-sub');
@@ -188,11 +190,23 @@ function updateUserBadge() {
     userRole.textContent = isAdmin() ? 'Administrador' : 'Usuário';
     userBadge.classList.add('show');
     loginTrigger.classList.add('hide');
+    verifyBanner.classList.toggle('hide', !!currentUser.emailVerified);
   } else {
     userBadge.classList.remove('show');
     loginTrigger.classList.remove('hide');
+    verifyBanner.classList.add('hide');
   }
 }
+
+resendVerificationLink.addEventListener('click', async function (e) {
+  e.preventDefault();
+  try {
+    await api('/auth/resend-verification', { method: 'POST' });
+    alert('E-mail de verificação reenviado. Confira sua caixa de entrada.');
+  } catch (err) {
+    alert(err.message);
+  }
+});
 
 function updateAccessUI() {
   if (isAdmin()) {
@@ -701,7 +715,30 @@ searchInput.addEventListener('input', function () {
 });
 
 // Inicialização
-const urlResetToken = new URLSearchParams(window.location.search).get('reset');
+function clearVerifyQueryParam() {
+  const url = new URL(window.location.href);
+  url.searchParams.delete('verify');
+  window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+}
+
+async function handleVerifyLink(token) {
+  try {
+    await api('/auth/verify-email', { method: 'POST', body: JSON.stringify({ token: token }) });
+    alert('E-mail verificado com sucesso!');
+    await restoreSession();
+    updateUserBadge();
+    updateAccessUI();
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    clearVerifyQueryParam();
+  }
+}
+
+const searchParams = new URLSearchParams(window.location.search);
+const urlResetToken = searchParams.get('reset');
+const urlVerifyToken = searchParams.get('verify');
+
 if (urlResetToken) {
   resetToken = urlResetToken;
   setAuthMode('reset');
@@ -709,6 +746,11 @@ if (urlResetToken) {
 } else {
   setAuthMode('login');
 }
+
+if (urlVerifyToken) {
+  handleVerifyLink(urlVerifyToken);
+}
+
 updateAccessUI();
 restoreSession();
 Promise.all([loadPosts(), loadProducts(), loadMedia(), loadEvents(), loadSite()]).catch(function (err) {

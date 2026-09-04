@@ -24,7 +24,9 @@ function requireAuth(req, res, next) {
 
   try {
     const payload = jwt.verify(token, SECRET);
-    const user = db.prepare('SELECT id, name, email, role FROM users WHERE id = ?').get(payload.sub);
+    const user = db
+      .prepare('SELECT id, name, email, role, email_verified FROM users WHERE id = ?')
+      .get(payload.sub);
     if (!user) return res.status(401).json({ error: 'Usuário não encontrado.' });
     req.user = user;
     next();

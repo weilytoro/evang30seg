@@ -20,6 +20,9 @@ db.exec(`
     locked_until TEXT,
     reset_token_hash TEXT,
     reset_token_expires TEXT,
+    email_verified INTEGER NOT NULL DEFAULT 0,
+    verify_token_hash TEXT,
+    verify_token_expires TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
 
@@ -95,6 +98,9 @@ ensureColumn('users', 'failed_login_attempts', "INTEGER NOT NULL DEFAULT 0");
 ensureColumn('users', 'locked_until', 'TEXT');
 ensureColumn('users', 'reset_token_hash', 'TEXT');
 ensureColumn('users', 'reset_token_expires', 'TEXT');
+ensureColumn('users', 'email_verified', 'INTEGER NOT NULL DEFAULT 0');
+ensureColumn('users', 'verify_token_hash', 'TEXT');
+ensureColumn('users', 'verify_token_expires', 'TEXT');
 
 db.prepare(
   `INSERT OR IGNORE INTO site_settings (id, about_text, contact_instagram, contact_email, contact_phone)

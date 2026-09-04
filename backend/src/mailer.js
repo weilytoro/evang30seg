@@ -13,13 +13,13 @@ if (smtpConfigured) {
   });
 }
 
-function buildResetLink(token) {
+function buildLink(param, token) {
   const baseUrl = (PUBLIC_URL || 'http://localhost:3000').replace(/\/$/, '');
-  return `${baseUrl}/?reset=${token}`;
+  return `${baseUrl}/?${param}=${token}`;
 }
 
 async function sendPasswordResetEmail(toEmail, token) {
-  const link = buildResetLink(token);
+  const link = buildLink('reset', token);
 
   if (!transporter) {
     console.warn(
@@ -41,4 +41,27 @@ async function sendPasswordResetEmail(toEmail, token) {
   });
 }
 
-module.exports = { sendPasswordResetEmail };
+async function sendVerificationEmail(toEmail, token) {
+  const link = buildLink('verify', token);
+
+  if (!transporter) {
+    console.warn(
+      '[aviso] SMTP não configurado (defina SMTP_HOST, SMTP_USER e SMTP_PASS no .env) — ' +
+      'o e-mail de verificação não foi enviado, apenas registrado abaixo:\n' +
+      `Link de verificação para ${toEmail}: ${link}`
+    );
+    return;
+  }
+
+  await transporter.sendMail({
+    from: SMTP_FROM || SMTP_USER,
+    to: toEmail,
+    subject: 'Confirme seu e-mail — Dinheiro chama dinheiro?',
+    text:
+      'Recebemos um cadastro com este e-mail.\n\n' +
+      `Confirme sua conta acessando o link abaixo (válido por 24 horas):\n${link}\n\n` +
+      'Se você não pediu isso, ignore este e-mail.',
+  });
+}
+
+module.exports = { sendPasswordResetEmail, sendVerificationEmail };

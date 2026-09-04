@@ -25,7 +25,8 @@ Acesse `http://localhost:3000`.
 ## Autenticação
 
 - Qualquer visitante pode criar conta (nome, e-mail, senha) pelo modal de login (link "Criar conta").
-- **Administrador é definido por e-mail**, não por código: quem se cadastrar (ou logar) com um e-mail listado em `ADMIN_EMAILS` vira administrador automaticamente. Por padrão isso inclui `weily@unemat.br`; para adicionar outros administradores, liste os e-mails separados por vírgula nessa variável.
+- **Administrador é definido por e-mail**, não por código: quem se cadastrar (ou logar) com um e-mail listado em `ADMIN_EMAILS` vira administrador — **somente depois de confirmar o e-mail** (ver abaixo). Por padrão isso inclui `weily@unemat.br`; para adicionar outros administradores, liste os e-mails separados por vírgula nessa variável.
+- **Verificação de e-mail**: toda conta nova recebe um link de confirmação (token de uso único, válido por 24h). Enquanto não confirmar, a conta funciona como usuário comum — mesmo que o e-mail esteja em `ADMIN_EMAILS` — para impedir que alguém vire administrador só digitando o e-mail de outra pessoa no cadastro, sem provar que tem acesso àquela caixa de entrada. Um link para reenviar a confirmação aparece no site enquanto a conta não for verificada.
 - Apenas administradores podem: publicar posts, adicionar produtos na loja, adicionar vídeos/podcasts, adicionar eventos, e editar os textos de "Sobre nós" e "Contato".
 - Qualquer visitante pode enviar contato de mentoria e se cadastrar na newsletter, sem login.
 - Sessão é feita via JWT (7 dias), guardado no `localStorage` do navegador; a verificação de permissão é sempre refeita no servidor (o frontend só esconde botões, não é a fonte de verdade).
@@ -38,9 +39,11 @@ Todas as rotas ficam sob `/api`. Corpo e respostas em JSON.
 
 | Método | Rota | Acesso | Descrição |
 |---|---|---|---|
-| POST | `/api/auth/register` | público | Cria conta (`name`, `email`, `password`) — vira admin automaticamente se o e-mail estiver em `ADMIN_EMAILS` |
-| POST | `/api/auth/login` | público | Login (`email`, `password`) — bloqueia a conta por 24h após 10 tentativas erradas |
+| POST | `/api/auth/register` | público | Cria conta (`name`, `email`, `password`) e envia e-mail de verificação |
+| POST | `/api/auth/login` | público | Login (`email`, `password`) — bloqueia a conta por 24h após 10 tentativas erradas; só promove a admin se o e-mail já foi verificado |
 | GET | `/api/auth/me` | autenticado | Dados do usuário logado |
+| POST | `/api/auth/verify-email` | público | Confirma o e-mail a partir do token do link (`token`) — só então o papel de admin é concedido |
+| POST | `/api/auth/resend-verification` | autenticado | Reenvia o e-mail de verificação, se a conta ainda não foi confirmada |
 | POST | `/api/auth/forgot-password` | público | Envia (ou loga) o link de redefinição de senha (`email`) |
 | POST | `/api/auth/reset-password` | público | Define nova senha a partir do token do link (`token`, `password`) |
 | GET | `/api/posts` | público | Lista publicações |
@@ -73,11 +76,12 @@ SQLite via `better-sqlite3`, arquivo criado automaticamente em `backend/data/app
 - `CORS_ORIGIN` — origem(ns) permitida(s) por CORS, separadas por vírgula. Deixe em branco (padrão) se o frontend for servido pelo próprio backend — nesse caso, CORS cross-origin fica **desabilitado** por padrão, que é o modo mais seguro para este projeto.
 - `FORCE_HTTPS` — `true` para redirecionar automaticamente requisições HTTP para HTTPS (útil atrás de um proxy/load balancer que termina o TLS). O app já envia `trust proxy` e cabeçalhos de segurança (via `helmet`, incluindo HSTS) independente dessa opção.
 - `PUBLIC_URL` — URL pública do site, usada para montar o link enviado no e-mail de redefinição de senha (ex.: `https://seusite.com`)
-- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` — credenciais de SMTP para envio real do e-mail de redefinição de senha. Sem elas, o link só é registrado no log do servidor.
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` — credenciais de SMTP para envio real dos e-mails de redefinição de senha e verificação de conta. Sem elas, os links só são registrados no log do servidor — funciona para você mesmo testar/operar, mas configure o SMTP antes de abrir o cadastro para usuários reais (sem isso, ninguém além de quem tem acesso ao log do servidor consegue confirmar a própria conta).
 
 ## Segurança
 
 - Senhas com hash (`bcrypt`), tokens JWT assinados, e toda autorização checada no servidor (nunca só no frontend).
 - Cabeçalhos de segurança via `helmet` (incluindo HSTS) e CORS desabilitado por padrão para origens externas.
-- Bloqueio de conta por 10 tentativas de login incorretas (24h).
-- **Pendências conhecidas, fora do escopo atual**: não há rate limiting por IP (só por conta), nem verificação de e-mail no cadastro. Avalie adicionar antes de abrir o site para tráfego não controlado.
+- Bloqueio de conta por 10 tentativas de login incorretas (24h), por e-mail.
+- Rate limiting por IP nas rotas de autenticação: 20 logins/15min, 10 cadastros/hora, 5 pedidos de redefinição/15min.
+- E-mail verificado é pré-requisito para virar administrador — fecha a brecha de alguém digitar o e-mail de outra pessoa no cadastro e ganhar acesso de admin sem provar que controla aquela caixa de entrada.
