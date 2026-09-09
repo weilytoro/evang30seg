@@ -77,6 +77,16 @@ SQLite via `better-sqlite3`, arquivo criado automaticamente em `backend/data/app
 - `FORCE_HTTPS` — `true` para redirecionar automaticamente requisições HTTP para HTTPS (útil atrás de um proxy/load balancer que termina o TLS). O app já envia `trust proxy` e cabeçalhos de segurança (via `helmet`, incluindo HSTS) independente dessa opção.
 - `PUBLIC_URL` — URL pública do site, usada para montar o link enviado no e-mail de redefinição de senha (ex.: `https://seusite.com`)
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` — credenciais de SMTP para envio real dos e-mails de redefinição de senha e verificação de conta. Sem elas, os links só são registrados no log do servidor — funciona para você mesmo testar/operar, mas configure o SMTP antes de abrir o cadastro para usuários reais (sem isso, ninguém além de quem tem acesso ao log do servidor consegue confirmar a própria conta).
+- `FRONTEND_DIR` — caminho absoluto para a pasta `frontend/`, só necessário se a plataforma de deploy usar uma estrutura de pastas diferente da deste repositório (`backend/` e `frontend/` como irmãs). Deixe em branco na maioria dos casos.
+
+## Deploy na Hostinger (hospedagem compartilhada/Business com Node.js)
+
+1. No hPanel, abra **Node.js** (em Avançado) e crie uma aplicação, ou conecte o repositório GitHub `weilytoro/evang30seg` (deploy automático a cada push) — ou envie um `.zip` do projeto (sem `node_modules` e sem `.git`).
+2. Nas configurações da aplicação: **Application Root** deve ser a pasta `backend/` (onde está o `package.json`); **Application Startup File** = `src/server.js`; escolha uma versão LTS do Node (18, 20, 22 ou 24 — todas suportadas).
+3. Defina as variáveis de ambiente na própria interface do hPanel (ou importe um `.env`): `JWT_SECRET`, `ADMIN_EMAILS`, `PUBLIC_URL` (o domínio real, com `https://`), e as credenciais de `SMTP_*` se já tiver configurado a Brevo.
+4. A Hostinger normalmente clona o repositório inteiro mesmo apontando a Application Root para `backend/`, então `frontend/` deve continuar acessível como pasta irmã e o site deve funcionar sem mais configuração. **Se a página vier em branco** (API funcionando mas sem CSS/JS), defina `FRONTEND_DIR` com o caminho absoluto real da pasta `frontend/` nesse ambiente.
+5. **Verifique a persistência do banco antes de confiar nele**: publique um post de teste pela tela de admin, dispare um redeploy (ou reinicie a aplicação pelo painel) e confirme se o post continua lá. A documentação da Hostinger é vaga sobre isso — se o arquivo `backend/data/app.db` for apagado a cada deploy, avise para migrarmos para o MySQL gerenciado deles em vez do SQLite.
+6. SSL: os planos com Node.js da Hostinger incluem certificado gerenciado gratuito — não deveria ser necessário configurar `FORCE_HTTPS` manualmente, mas se notar acesso HTTP sem redirecionar para HTTPS, defina essa variável como `true`.
 
 ## Segurança
 

@@ -49,7 +49,12 @@ app.use('/api/events', eventsRoutes);
 app.use('/api/site', siteRoutes);
 app.use('/api/leads', leadsRoutes);
 
-const frontendDir = path.join(__dirname, '..', '..', 'frontend');
+// Assume irmã de backend/ por padrão; algumas plataformas de deploy usam uma
+// estrutura de pastas diferente, então FRONTEND_DIR permite apontar para o
+// caminho real caso a detecção automática não funcione.
+const frontendDir = process.env.FRONTEND_DIR
+  ? path.resolve(process.env.FRONTEND_DIR)
+  : path.join(__dirname, '..', '..', 'frontend');
 app.use(express.static(frontendDir));
 app.get('/', (req, res) => {
   res.sendFile(path.join(frontendDir, 'index.html'));
