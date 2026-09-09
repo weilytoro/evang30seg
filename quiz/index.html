@@ -176,9 +176,10 @@ input:focus { border-color: rgba(212,180,120,0.45); }
 <script>
 // ═══════════════════════════════════
 // PERGUNTAS — Diagnóstico de mentalidade financeira
-// Baseado no capítulo 1.1 "Qual o seu nível de mentalidade financeira?" do
-// livro "Dinheiro Chama Dinheiro? Só se você mudar sua mentalidade"
-// (Weily Toro Machado).
+// Baseado no capítulo 1 do livro "Dinheiro Chama Dinheiro? Só se você
+// mudar sua mentalidade" (Weily Toro Machado): as 8 primeiras vêm da seção
+// 1.1 ("Qual o seu nível de mentalidade financeira?"); a última é bônus,
+// baseada na mentalidade de abundância x escassez das seções 1.1/1.2.
 // Cada opção tem um trait de nivel1 (Bloqueada) a nivel5 (Evoluída); ao
 // final, o nível com mais ocorrências entre as respostas é o exibido.
 // ═══════════════════════════════════
@@ -261,6 +262,16 @@ const QUESTIONS = [
       { texto: 'Tive avanços reais, com recaídas — foi mais travessia do que linha reta', trait: 'nivel3' },
       { texto: 'Os alicerces já foram lançados: tenho hábitos consistentes e vejo a estrutura mudando', trait: 'nivel4' },
       { texto: 'Minha relação com o dinheiro já inspira outras pessoas ao meu redor', trait: 'nivel5' },
+    ]
+  },
+  {
+    texto: 'Quando pensa em realizar algo que exige um dinheiro que você não tem agora...',
+    opcoes: [
+      { texto: 'Penso "nunca vou conseguir" e nem tento buscar um caminho', trait: 'nivel1' },
+      { texto: 'Sei que preciso de recursos, mas não sei como buscá-los e acabo desistindo', trait: 'nivel2' },
+      { texto: 'Às vezes busco soluções, às vezes desisto no meio do caminho', trait: 'nivel3' },
+      { texto: 'Busco recursos e oportunidades, e ajusto o plano quando preciso', trait: 'nivel4' },
+      { texto: 'Penso "posso encontrar recursos e oportunidades para tornar isso realidade"', trait: 'nivel5' },
     ]
   },
 ];
