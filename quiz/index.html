@@ -176,115 +176,116 @@ input:focus { border-color: rgba(212,180,120,0.45); }
 <script>
 // ═══════════════════════════════════
 // PERGUNTAS — Diagnóstico de mentalidade financeira
-// Baseado nos 5 Níveis de Mentalidade do livro "Dinheiro Chama Dinheiro?
-// Só se você mudar sua mentalidade" (Weily Toro Machado).
+// Baseado no capítulo 1.1 "Qual o seu nível de mentalidade financeira?" do
+// livro "Dinheiro Chama Dinheiro? Só se você mudar sua mentalidade"
+// (Weily Toro Machado).
 // Cada opção tem um trait de nivel1 (Bloqueada) a nivel5 (Evoluída); ao
 // final, o nível com mais ocorrências entre as respostas é o exibido.
 // ═══════════════════════════════════
 const QUESTIONS = [
   {
-    texto: 'Quando você pensa em olhar seus extratos, boletos e dívidas...',
+    texto: 'Quando você pensa em olhar seus extratos e contas...',
     opcoes: [
-      { texto: 'Sinto vergonha e medo, e evito olhar por dias', trait: 'nivel1' },
-      { texto: 'Sei que preciso organizar, mas fico adiando', trait: 'nivel2' },
-      { texto: 'Organizo tudo por um tempo, depois deixo acumular de novo', trait: 'nivel3' },
-      { texto: 'Tenho uma rotina de checar e planejar, mesmo ajustando detalhes', trait: 'nivel4' },
-      { texto: 'Olho com tranquilidade — é só uma ferramenta que eu domino', trait: 'nivel5' },
+      { texto: 'Evito olhar — sinto vergonha, medo ou culpa só de pensar nisso', trait: 'nivel1' },
+      { texto: 'Já tentei planilhas e apps várias vezes, mas nunca mantenho por muito tempo', trait: 'nivel2' },
+      { texto: 'Registro meus gastos em fases boas; em fases ruins, largo tudo', trait: 'nivel3' },
+      { texto: 'Sei quanto ganho e para onde vai cada real, e planejo o mês antes de começar', trait: 'nivel4' },
+      { texto: 'Acompanho com tranquilidade — é só uma ferramenta a serviço dos meus planos', trait: 'nivel5' },
     ]
   },
   {
-    texto: 'Qual pensamento mais aparece quando você imagina ganhar mais dinheiro?',
+    texto: 'Qual frase mais soa com o que você pensa sobre seu futuro financeiro?',
     opcoes: [
-      { texto: '"Dinheiro é ferramenta a serviço do meu propósito"', trait: 'nivel5' },
-      { texto: '"Tenho um plano e sigo ele, mesmo com desafios"', trait: 'nivel4' },
-      { texto: '"Tenho dias de foco total e dias que jogo tudo pro alto"', trait: 'nivel3' },
-      { texto: '"Sei que preciso mudar, mas nunca mantenho o ritmo"', trait: 'nivel2' },
-      { texto: '"Não é pra mim, nunca vai dar certo"', trait: 'nivel1' },
+      { texto: '"Nunca vai dar certo pra mim"', trait: 'nivel1' },
+      { texto: '"Sei que preciso mudar, mas não sei bem por onde começar"', trait: 'nivel2' },
+      { texto: '"Já não sou mais o mesmo de antes, mas ainda oscilo bastante"', trait: 'nivel3' },
+      { texto: '"Ainda falta ajustar coisas, mas já tenho direção clara"', trait: 'nivel4' },
+      { texto: '"Meu dinheiro está a serviço da minha missão e da minha família"', trait: 'nivel5' },
     ]
   },
   {
-    texto: 'Diante de um aperto financeiro inesperado, sua reação mais comum é...',
+    texto: 'Diante de uma dívida ou imprevisto financeiro, sua reação mais comum é...',
     opcoes: [
-      { texto: 'Entro em pânico e travo, sem conseguir agir', trait: 'nivel1' },
-      { texto: 'Fico ansioso(a) e reajo por impulso, sem planejar', trait: 'nivel2' },
-      { texto: 'Às vezes analiso com calma, às vezes reajo no desespero', trait: 'nivel3' },
-      { texto: 'Paro, analiso as opções e decido com clareza', trait: 'nivel4' },
-      { texto: 'Já tenho reserva e plano para esse tipo de situação', trait: 'nivel5' },
+      { texto: 'Travo e evito olhar para o problema', trait: 'nivel1' },
+      { texto: 'Sinto que caí de novo no mesmo ciclo de sempre, e me frustro', trait: 'nivel2' },
+      { texto: 'Às vezes enfrento com calma, às vezes entro em pânico e gasto por impulso', trait: 'nivel3' },
+      { texto: 'Sinto o impacto, ajusto a rota e sigo em frente, sem desespero', trait: 'nivel4' },
+      { texto: 'Encaro como desafio temporário — já tenho reserva e busco a saída', trait: 'nivel5' },
     ]
   },
   {
-    texto: 'Sobre aprender mais sobre finanças (cursos, planilhas, mentoria)...',
+    texto: 'Sobre planejar o mês (fazer um orçamento)...',
     opcoes: [
-      { texto: 'Já ajudo outras pessoas a organizarem a vida financeira', trait: 'nivel5' },
-      { texto: 'Busco aprender continuamente e aplico o que aprendo', trait: 'nivel4' },
-      { texto: 'Consigo seguir por um tempo, mas oscilo bastante', trait: 'nivel3' },
-      { texto: 'Já comecei vários cursos e planilhas e larguei todos no meio', trait: 'nivel2' },
-      { texto: 'Sinto vergonha de admitir que não sei lidar com isso', trait: 'nivel1' },
+      { texto: 'Nunca fiz um orçamento, nem sei bem por onde começar', trait: 'nivel1' },
+      { texto: 'Já comecei orçamentos várias vezes, mas abandono nas primeiras semanas', trait: 'nivel2' },
+      { texto: 'Monto um plano no início do mês, mas raramente sigo até o fim', trait: 'nivel3' },
+      { texto: 'Planejo o mês antes que ele comece e cumpro a maior parte', trait: 'nivel4' },
+      { texto: 'Planejo, invisto com consciência e ainda separo parte para ajudar outros', trait: 'nivel5' },
     ]
   },
   {
-    texto: 'Quando alguém próximo prospera financeiramente, o que você sente?',
+    texto: 'Uma frase como "dinheiro é a raiz de todos os males" ou "quem tem muito é egoísta"...',
     opcoes: [
-      { texto: 'Inveja ou a sensação de que "nunca vai ser eu"', trait: 'nivel1' },
-      { texto: 'Motivação por um dia, que logo esfria', trait: 'nivel2' },
-      { texto: 'Inspiração, mas também comparação que me desanima às vezes', trait: 'nivel3' },
-      { texto: 'Inspiração real, que uso para ajustar meus próprios planos', trait: 'nivel4' },
-      { texto: 'Alegria genuína — sei que abundância não é limitada', trait: 'nivel5' },
+      { texto: 'É exatamente o que eu acredito, no fundo', trait: 'nivel1' },
+      { texto: 'Repito às vezes, mas já desconfio que não é bem assim', trait: 'nivel2' },
+      { texto: 'Consigo questionar na maioria das vezes, mas ela ainda volta em momentos de estresse', trait: 'nivel3' },
+      { texto: 'Já substituí isso por uma crença mais forte na maior parte da minha rotina', trait: 'nivel4' },
+      { texto: 'Já não faz mais sentido pra mim — dinheiro é instrumento a serviço de algo maior', trait: 'nivel5' },
     ]
   },
   {
-    texto: 'Como você lida com uma decisão financeira importante e difícil?',
+    texto: 'Quando você vê alguém próximo prosperando financeiramente, o que sente?',
     opcoes: [
-      { texto: 'Decido com clareza, usando razão e escuta ao mesmo tempo', trait: 'nivel4' },
-      { texto: 'Evito decidir — fico adiando até a situação decidir por mim', trait: 'nivel1' },
-      { texto: 'Sei o que preciso fazer, mas não consigo agir', trait: 'nivel2' },
-      { texto: 'Decido, mas volto atrás quando bate o medo', trait: 'nivel3' },
-      { texto: 'Decido com serenidade — dinheiro não define meu valor', trait: 'nivel5' },
+      { texto: 'Que "nunca vai ser assim comigo"', trait: 'nivel1' },
+      { texto: 'Fico motivado(a) por um dia, mas o ânimo passa rápido', trait: 'nivel2' },
+      { texto: 'Me inspiro, mas às vezes me comparo e desanimo', trait: 'nivel3' },
+      { texto: 'Uso como inspiração real para ajustar meu próprio plano', trait: 'nivel4' },
+      { texto: 'Alegria genuína — sei que há recursos e oportunidades para todos', trait: 'nivel5' },
     ]
   },
   {
-    texto: 'Que frase mais parece com algo que você já pensou ou ouviu em casa?',
+    texto: 'Sobre ter uma reserva de dinheiro para imprevistos...',
     opcoes: [
-      { texto: '"Quem nasce pobre, morre pobre"', trait: 'nivel1' },
-      { texto: '"Eu sei que preciso mudar, mas é difícil manter"', trait: 'nivel2' },
-      { texto: '"Já melhorei bastante, mas ainda oscilo"', trait: 'nivel3' },
-      { texto: '"Tenho direção clara e planejo antes de agir"', trait: 'nivel4' },
-      { texto: '"Dinheiro é instrumento — está no seu devido lugar na minha vida"', trait: 'nivel5' },
+      { texto: 'Não tenho nenhuma, e só de pensar nisso já sinto ansiedade', trait: 'nivel1' },
+      { texto: 'Já tentei guardar várias vezes, mas sempre acabo usando pra outra coisa', trait: 'nivel2' },
+      { texto: 'Tenho uma reserva pequena, que cresce e diminui dependendo da fase', trait: 'nivel3' },
+      { texto: 'Tenho uma reserva e penso nela como parte do meu planejamento', trait: 'nivel4' },
+      { texto: 'Minhas reservas e investimentos são estratégicos, alinhados a objetivos maiores', trait: 'nivel5' },
     ]
   },
   {
-    texto: 'Olhando para os últimos 12 meses, o que melhor descreve sua jornada financeira?',
+    texto: 'Olhando para os últimos 12 meses da sua vida financeira...',
     opcoes: [
-      { texto: 'Continua repetindo os mesmos problemas de sempre', trait: 'nivel1' },
-      { texto: 'Comecei a mudar algumas vezes, mas nunca sustentei', trait: 'nivel2' },
-      { texto: 'Tive avanços reais, mas com recaídas no meio do caminho', trait: 'nivel3' },
-      { texto: 'Estou construindo algo sólido, com metas e planejamento', trait: 'nivel4' },
-      { texto: 'Minhas escolhas financeiras já inspiram outras pessoas', trait: 'nivel5' },
+      { texto: 'Continuo travado(a) nos mesmos problemas de sempre', trait: 'nivel1' },
+      { texto: 'Tentei mudar várias vezes, mas sempre volto ao ponto de partida', trait: 'nivel2' },
+      { texto: 'Tive avanços reais, com recaídas — foi mais travessia do que linha reta', trait: 'nivel3' },
+      { texto: 'Os alicerces já foram lançados: tenho hábitos consistentes e vejo a estrutura mudando', trait: 'nivel4' },
+      { texto: 'Minha relação com o dinheiro já inspira outras pessoas ao meu redor', trait: 'nivel5' },
     ]
   },
 ];
 
-// Um resultado por nível — baseado nos 5 Níveis de Mentalidade do livro.
+// Um resultado por nível — baseado no capítulo 1.1 do livro.
 const PERFIS = {
   nivel1: {
-    titulo: 'Mentalidade Bloqueada',
-    descricao: 'Você evita olhar de frente para sua realidade financeira. Vergonha, medo e culpa aparecem quando o assunto surge, e crenças antigas ("nunca vai dar certo", "não é pra mim") acabam decidindo por você antes mesmo de você tentar. O primeiro passo não é uma revolução — é reconhecer o bloqueio e dar um passo pequeno hoje, não amanhã.'
+    titulo: 'Mentalidade Financeira Bloqueada',
+    descricao: 'O dinheiro virou um peso constante na sua mente. Você evita olhar extratos, adia conversas sobre finanças e sente vergonha, medo ou culpa quando o assunto aparece. Crenças antigas dizem que "nunca vai dar certo" ou que "dinheiro não é para você" — e elas decidem por você antes mesmo de tentar. O primeiro passo não é resolver tudo de uma vez: é reconhecer essas grades internas, porque são o primeiro muro que precisa cair.'
   },
   nivel2: {
-    titulo: 'Mentalidade Estagnada',
-    descricao: 'Você sabe o que precisa mudar, mas não sustenta o ritmo. Começa animado(a) e desanima logo depois — como um carro ligado com o freio de mão puxado. Não falta informação, falta ação consistente. O caminho é começar pequeno: um hábito simples por vez, e alguém de confiança para acompanhar o progresso.'
+    titulo: 'Mentalidade Financeira Estagnada',
+    descricao: 'Você já percebe que precisa mudar — já tentou planilhas, aulas, planejamentos — mas não consegue manter o ritmo. Começa animado(a) e desanima logo depois: é como estar com o carro ligado e o freio de mão puxado por dentro. O problema não é falta de informação, é falta de ação consistente. Você vive num "quase": quase organiza, quase começa, quase muda. Esse "quase" é exatamente o que precisa enfrentar agora.'
   },
   nivel3: {
-    titulo: 'Mentalidade em Transição',
-    descricao: 'A mudança já começou — só que ainda com oscilação: dias bons e dias ruins, entre o "eu antigo" e o "eu novo". Cada recaída é aprendizado, não fracasso. O foco agora é manter consistência, trocar comparação com os outros por ação sobre si mesmo, e celebrar as pequenas vitórias no caminho.'
+    titulo: 'Mentalidade Financeira em Transição',
+    descricao: 'A mudança já começou dentro de você: registra gastos, tentou organizar as contas, talvez já tenha renegociado dívidas ou iniciado uma reserva. Mas ainda há instabilidade — dias de foco e dias em que os velhos hábitos voltam, seguidos de culpa. Você está atravessando uma ponte: já saiu da margem antiga, mas ainda não chegou à nova. Cada escorregão agora é aprendizado, não fracasso.'
   },
   nivel4: {
-    titulo: 'Mentalidade em Construção',
-    descricao: 'Você já tem direção e planeja antes de agir. Não está mais no caos, mas os desafios continuam — os alicerces foram lançados e a casa está sendo construída. A partir daqui, vale aprofundar: metas mais audaciosas e proximidade com quem também está evoluindo.'
+    titulo: 'Mentalidade Financeira em Construção',
+    descricao: 'O caos já deu lugar a uma base mais firme. Você sabe quanto ganha, para onde o dinheiro vai, e planeja o mês antes que ele comece. Quando um imprevisto aparece, sente o impacto, ajusta a rota e segue — sem desespero. Nem tudo está pronto, mas os alicerces já foram lançados. A cada decisão consciente, um tijolo novo é colocado na estrutura que vai sustentar tudo que ainda virá.'
   },
   nivel5: {
-    titulo: 'Mentalidade Evoluída',
-    descricao: 'Dinheiro e negócio estão no lugar certo na sua vida: ferramentas a serviço do propósito, não prova de valor. Suas decisões não nascem de culpa, pressa ou comparação — e isso já inspira outras pessoas. O próximo passo é continuar crescendo e ajudar quem ainda está no início da jornada.'
+    titulo: 'Mentalidade Financeira Evoluída',
+    descricao: 'O dinheiro deixou de ser vilão ou ídolo e ocupa o lugar certo: ferramenta a serviço da sua vida e do seu propósito. Você pensa antes de agir, planeja antes de gastar, investe com consciência e doa com generosidade. Suas escolhas não nascem de culpa ou pressa, mas dos seus valores — e isso já inspira outras pessoas. Você sabe: não chegou a um fim, mas a um novo começo.'
   },
 };
 
