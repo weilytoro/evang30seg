@@ -182,6 +182,34 @@
 
   #login-trigger.hide { display: none; }
 
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    gap: 5px;
+    width: 2.2rem;
+    height: 2.2rem;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .nav-toggle span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--ink);
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
   main { max-width: 980px; margin: 0 auto; padding: 0 1.5rem; }
 
   /* Hero */
@@ -876,9 +904,38 @@
     gap: 0.6rem;
   }
 
+  @media (max-width: 860px) {
+    .nav-toggle { display: flex; }
+
+    nav.site {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+      background: var(--white);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 8px 16px rgba(26, 26, 24, 0.06);
+      padding: 1.2rem 1.5rem 1.5rem;
+    }
+
+    nav.site.open { display: flex; }
+
+    nav.site ul { flex-direction: column; gap: 0.9rem; }
+
+    nav.site .cta { align-self: flex-start; }
+
+    .search-area { max-width: 100%; }
+
+    .auth-area { flex-wrap: wrap; }
+  }
+
   @media (max-width: 720px) {
-    nav.site ul { gap: 1.1rem; }
-    .search-area { order: 3; max-width: 100%; flex-basis: 100%; }
+    .search-area { order: 3; flex-basis: 100%; }
     .hero h1 { font-size: 2.2rem; }
     .post-row { grid-template-columns: 1fr; gap: 0.35rem; }
     .post-row .cat { justify-self: start; }
@@ -897,7 +954,10 @@
 <header class="site">
   <div class="site-inner">
     <div class="wordmark">Dinheiro chama <span>dinheiro?</span></div>
-    <nav class="site">
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="site-nav">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="site" id="site-nav">
       <ul>
         <li><a href="#inicio">Início</a></li>
         <li><a href="#posts">Publicações</a></li>

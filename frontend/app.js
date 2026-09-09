@@ -756,3 +756,29 @@ restoreSession();
 Promise.all([loadPosts(), loadProducts(), loadMedia(), loadEvents(), loadSite()]).catch(function (err) {
   console.error('Falha ao carregar dados iniciais:', err);
 });
+
+// Menu mobile
+const navToggle = document.getElementById('nav-toggle');
+const siteNav = document.getElementById('site-nav');
+
+function closeMobileNav() {
+  siteNav.classList.remove('open');
+  navToggle.classList.remove('open');
+  navToggle.setAttribute('aria-expanded', 'false');
+}
+
+navToggle.addEventListener('click', function () {
+  const isOpen = siteNav.classList.toggle('open');
+  navToggle.classList.toggle('open', isOpen);
+  navToggle.setAttribute('aria-expanded', String(isOpen));
+});
+
+siteNav.querySelectorAll('a').forEach(function (link) {
+  link.addEventListener('click', closeMobileNav);
+});
+
+document.addEventListener('click', function (e) {
+  if (!siteNav.classList.contains('open')) return;
+  if (siteNav.contains(e.target) || navToggle.contains(e.target)) return;
+  closeMobileNav();
+});
