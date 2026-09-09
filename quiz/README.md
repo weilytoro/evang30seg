@@ -1,7 +1,10 @@
-# Quiz
+# Quiz — Mentalidade Financeira
 
-Formulário de quiz (nome + data + perguntas de múltipla escolha) que calcula
-um resultado por perfil/categoria ao final e grava a resposta num banco MySQL.
+Quiz (nome + data + 8 perguntas de múltipla escolha) que diagnostica o nível
+de mentalidade financeira de quem responde e grava a resposta num banco
+MySQL. As perguntas e os 5 resultados (Bloqueada, Estagnada, Em Transição,
+Em Construção, Evoluída) são baseados no capítulo 1 do livro *Dinheiro Chama
+Dinheiro? Só se você mudar sua mentalidade* (Weily Toro Machado).
 
 ## Estrutura
 
@@ -19,13 +22,14 @@ quiz/
     logout.php
 ```
 
-## Colocar as perguntas reais
+## Editar perguntas ou resultados
 
-Edite o array `QUESTIONS` e o objeto `PERFIS` no topo do `<script>` de
-`quiz/index.html`. Cada opção de resposta tem um `trait` (chave de perfil);
-ao final, o perfil com mais ocorrências entre as respostas é o exibido. Os
-placeholders atuais (`Pergunta de exemplo...`, `Perfil A/B/C/D`) devem ser
-substituídos pelo conteúdo real.
+O array `QUESTIONS` e o objeto `PERFIS` estão no topo do `<script>` de
+`quiz/index.html`. Cada opção de resposta tem um `trait` (`nivel1` a
+`nivel5`); ao final, o nível com mais ocorrências entre as respostas é o
+exibido. Se o texto do capítulo 1 do livro definir os níveis de forma
+diferente da skill `metodo-gerar-mentalidade` usada como base, ajuste as
+perguntas e as descrições em `PERFIS` para bater com o texto original.
 
 ## Deploy na hospedagem PHP + MySQL
 
