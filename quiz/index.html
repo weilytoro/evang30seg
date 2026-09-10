@@ -409,6 +409,7 @@ async function finishQuiz() {
     telefone,
     perfilChave,
     perfilTitulo: perfil.titulo,
+    perfilDescricao: perfil.descricao,
     respostas: QUESTIONS.map((q, i) => ({
       pergunta: q.texto,
       resposta: respostas[i] !== null ? q.opcoes[respostas[i]].texto : null,

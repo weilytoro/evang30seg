@@ -35,7 +35,8 @@ quiz/
    `const SAVE_URL = ...`) por essa URL.
 7. Publique/suba o `quiz/index.html`. Cada resposta enviada cria
    automaticamente uma aba "Respostas" na planilha com data/hora, nome,
-   e-mail, telefone, perfil e o detalhe de cada resposta.
+   e-mail, telefone, perfil, a descrição completa do resultado e o
+   detalhe de cada resposta.
 
 Se você editar `Code.gs` depois (inclusive ao atualizar para uma versão
 mais nova deste repositório), é preciso ir em **Implantar → Gerenciar
