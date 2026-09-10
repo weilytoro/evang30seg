@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Mentalidade Financeira</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #f3ebd8;
+  --s1: #ffffff;
+  --s2: #f5efe0;
+  --bd: rgba(138,101,31,0.16);
+  --bd2: rgba(138,101,31,0.32);
+  --gold: #b1852c;
+  --gold2: #d9ad55;
+  --gold3: #8a651f;
+  --ink: #2b2417;
+  --muted: #7d7259;
+  --err: #c0392b;
+  --r: 12px;
+  --fh: 'Playfair Display', serif;
+  --fb: 'Inter', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--fb);
+  min-height: 100vh;
+}
+
+.orb { position: fixed; border-radius: 50%; filter: blur(160px); pointer-events: none; z-index: 0; }
+.orb.a { width: 700px; height: 700px; background: rgba(138,101,31,0.05); top: -300px; right: -200px; }
+.orb.b { width: 500px; height: 500px; background: rgba(138,101,31,0.035); bottom: -200px; left: -150px; }
+
+.app { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; padding: 48px 20px 80px; }
+
+header { text-align: center; margin-bottom: 40px; }
+.cross {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--gold), var(--gold3));
+  border-radius: 14px; font-size: 24px; color: #fff;
+  box-shadow: 0 0 40px rgba(138,101,31,0.25);
+}
+.header-title {
+  font-family: var(--fh); font-size: clamp(26px, 7vw, 38px);
+  font-weight: 900; letter-spacing: -0.5px; line-height: 1.1;
+  color: var(--ink); margin-bottom: 8px;
+}
+.header-sub { font-size: 13px; color: var(--muted); letter-spacing: 0.04em; }
+
+.sec { display: none; animation: rise 0.35s ease; }
+.sec.on { display: block; }
+@keyframes rise { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+.panel { background: var(--s1); border: 1px solid var(--bd); border-radius: var(--r); padding: 24px; margin-bottom: 14px; box-shadow: 0 2px 16px rgba(138,101,31,0.06); }
+
+label { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+input[type=text], input[type=email], input[type=tel] {
+  width: 100%; background: var(--s2); border: 1px solid var(--bd); border-radius: 8px;
+  color: var(--ink); font-family: var(--fb); font-size: 14px; padding: 11px 12px;
+  outline: none; transition: border 0.2s; margin-bottom: 14px;
+}
+input:focus { border-color: rgba(138,101,31,0.5); }
+
+.progress-wrap { margin-bottom: 20px; }
+.progress-lbl { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+.progress-lbl b { color: var(--gold3); }
+.progress-track { height: 5px; background: var(--s2); border-radius: 999px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold3), var(--gold)); border-radius: 999px; transition: width 0.35s ease; }
+
+.q-text { font-family: var(--fh); font-size: 20px; font-weight: 700; line-height: 1.35; margin-bottom: 20px; }
+
+.opt { display: flex; align-items: center; gap: 12px; background: var(--s2); border: 1px solid var(--bd); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: all 0.2s; margin-bottom: 10px; }
+.opt:hover { border-color: var(--bd2); }
+.opt.sel { background: rgba(138,101,31,0.1); border-color: var(--gold); }
+.opt-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--bd2); flex-shrink: 0; position: relative; }
+.opt.sel .opt-dot { border-color: var(--gold); }
+.opt.sel .opt-dot::after { content:''; position:absolute; inset:2px; border-radius:50%; background: var(--gold); }
+.opt-txt { font-size: 14px; color: var(--ink); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 13px 24px; border-radius: 999px; font-family: var(--fh); font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; letter-spacing: 0.01em; }
+.btn-gold { background: linear-gradient(135deg, var(--gold3), var(--gold)); color: #fff; width: 100%; box-shadow: 0 4px 24px rgba(138,101,31,0.28); }
+.btn-gold:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(138,101,31,0.4); }
+.btn-gold:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-ghost { background: transparent; color: var(--muted); font-size: 12px; font-family: var(--fb); padding: 10px 16px; border-radius: 999px; }
+.btn-ghost:hover { color: var(--ink); }
+.btn-row { display: flex; gap: 10px; align-items: center; }
+
+.err-box { font-size: 12px; color: var(--err); margin-bottom: 12px; display: none; }
+
+.prog-wrap { text-align: center; padding: 50px 0; }
+.spinner { width: 44px; height: 44px; border: 3px solid rgba(138,101,31,0.18); border-top-color: var(--gold); border-radius: 50%; margin: 0 auto 20px; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.prog-lbl { font-family: var(--fh); font-size: 16px; font-weight: 700; }
+
+.res-wrap { text-align: center; }
+.res-icon { font-size: 52px; display: block; margin-bottom: 14px; animation: pop 0.55s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes pop { from{transform:scale(0)} to{transform:scale(1)} }
+.res-title { font-family: var(--fh); font-size: 26px; font-weight: 900; margin-bottom: 10px; color: var(--gold3); }
+.res-desc { color: var(--ink); opacity: 0.85; font-size: 14px; line-height: 1.7; margin-bottom: 24px; text-align: left; }
+.res-warn { font-size: 11px; color: var(--muted); margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<div class="orb a"></div>
+<div class="orb b"></div>
+
+<div class="app">
+
+  <header>
+    <div class="cross">✝</div>
+    <h1 class="header-title">Qual o seu nível de<br>mentalidade financeira?</h1>
+    <p class="header-sub">Responda com sinceridade e descubra onde você está</p>
+  </header>
+
+  <!-- STEP: DADOS -->
+  <div class="sec on" id="sec-start">
+    <div class="panel">
+      <label>Nome</label>
+      <input type="text" id="in-nome" placeholder="Seu nome completo" autocomplete="name">
+      <label>E-mail</label>
+      <input type="email" id="in-email" placeholder="seu@email.com" autocomplete="email">
+      <label>Telefone</label>
+      <input type="tel" id="in-telefone" placeholder="(00) 00000-0000" autocomplete="tel">
+      <div class="err-box" id="start-err"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-gold" id="btn-start" onclick="startQuiz()">Começar →</button>
+    </div>
+  </div>
+
+  <!-- STEP: PERGUNTAS -->
+  <div class="sec" id="sec-quiz">
+    <div class="progress-wrap">
+      <div class="progress-lbl"><span>Pergunta <b id="q-n">1</b> de <b id="q-tot">–</b></span><span id="q-pct">0%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="q-fill" style="width:0%"></div></div>
+    </div>
+    <div class="panel">
+      <div class="q-text" id="q-text"></div>
+      <div id="q-opts"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="btn-back" onclick="prevQ()">← Voltar</button>
+      <button class="btn btn-gold" id="btn-next" style="flex:1" disabled onclick="nextQ()">Próxima →</button>
+    </div>
+  </div>
+
+  <!-- STEP: ENVIANDO -->
+  <div class="sec" id="sec-sending">
+    <div class="prog-wrap">
+      <div class="spinner"></div>
+      <div class="prog-lbl">Calculando resultado...</div>
+    </div>
+  </div>
+
+  <!-- STEP: RESULTADO -->
+  <div class="sec" id="sec-result">
+    <div class="res-wrap">
+      <span class="res-icon">✝️</span>
+      <div class="res-title" id="res-title"></div>
+      <div class="res-desc" id="res-desc"></div>
+      <div class="res-warn" id="res-warn" style="display:none;">Não foi possível salvar sua resposta na planilha, mas o resultado acima é válido.</div>
+      <button class="btn btn-gold" onclick="restart()">Refazer o quiz</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════
+// PERGUNTAS — Diagnóstico de mentalidade financeira
+// Baseado no capítulo 1 do livro "Dinheiro Chama Dinheiro? Só se você
+// mudar sua mentalidade" (Weily Toro Machado): as 8 primeiras vêm da seção
+// 1.1 ("Qual o seu nível de mentalidade financeira?"); a última é bônus,
+// baseada na mentalidade de abundância x escassez das seções 1.1/1.2.
+// Cada opção tem um trait de nivel1 (Bloqueada) a nivel5 (Evoluída); ao
+// final, o nível com mais ocorrências entre as respostas é o exibido.
+// ═══════════════════════════════════
+const QUESTIONS = [
+  {
+    texto: 'Quando você pensa em olhar seus extratos e contas...',
+    opcoes: [
+      { texto: 'Evito olhar — sinto vergonha, medo ou culpa só de pensar nisso', trait: 'nivel1' },
+      { texto: 'Já tentei planilhas e apps várias vezes, mas nunca mantenho por muito tempo', trait: 'nivel2' },
+      { texto: 'Registro meus gastos em fases boas; em fases ruins, largo tudo', trait: 'nivel3' },
+      { texto: 'Sei quanto ganho e para onde vai cada real, e planejo o mês antes de começar', trait: 'nivel4' },
+      { texto: 'Acompanho com tranquilidade — é só uma ferramenta a serviço dos meus planos', trait: 'nivel5' },
+    ]
+  },
+  {
+    texto: 'Qual frase mais soa com o que você pensa sobre seu futuro financeiro?',
+    opcoes: [
+      { texto: '"Nunca vai dar certo pra mim"', trait: 'nivel1' },
+      { texto: '"Sei que preciso mudar, mas não sei bem por onde começar"', trait: 'nivel2' },
+      { texto: '"Já não sou mais o mesmo de antes, mas ainda oscilo bastante"', trait: 'nivel3' },
+      { texto: '"Ainda falta ajustar coisas, mas já tenho direção clara"', trait: 'nivel4' },
+      { texto: '"Meu dinheiro está a serviço da minha missão e da minha família"', trait: 'nivel5' },
+    ]
+  },
+  {
+    texto: 'Diante de uma dívida ou imprevisto financeiro, sua reação mais comum é...',
+    opcoes: [
+      { texto: 'Travo e evito olhar para o problema', trait: 'nivel1' },
+      { texto: 'Sinto que caí de novo no mesmo ciclo de sempre, e me frustro', trait: 'nivel2' },
+      { texto: 'Às vezes enfrento com calma, às vezes entro em pânico e gasto por impulso', trait: 'nivel3' },
+      { texto: 'Sinto o impacto, ajusto a rota e sigo em frente, sem desespero', trait: 'nivel4' },
+      { texto: 'Encaro como desafio temporário — já tenho reserva e busco a saída', trait: 'nivel5' },
+    ]
+  },
+  {
+    texto: 'Sobre planejar o mês (fazer um orçamento)...',
+    opcoes: [
+      { texto: 'Nunca fiz um orçamento, nem sei bem por onde começar', trait: 'nivel1' },
+      { texto: 'Já comecei orçamentos várias vezes, mas abandono nas primeiras semanas', trait: 'nivel2' },
+      { texto: 'Monto um plano no início do mês, mas raramente sigo até o fim', trait: 'nivel3' },
+      { texto: 'Planejo o mês antes que ele comece e cumpro a maior parte', trait: 'nivel4' },
+      { texto: 'Planejo, invisto com consciência e ainda separo parte para ajudar outros', trait: 'nivel5' },
+    ]
+  },
+  {
+    texto: 'Uma frase como "dinheiro é a raiz de todos os males" ou "quem tem muito é egoísta"...',
+    opcoes: [
+      { texto: 'É exatamente o que eu acredito, no fundo', trait: 'nivel1' },
+      { texto: 'Repito às vezes, mas já desconfio que não é bem assim', trait: 'nivel2' },
+      { texto: 'Consigo questionar na maioria das vezes, mas ela ainda volta em momentos de estresse', trait: 'nivel3' },
+      { texto: 'Já substituí isso por uma crença mais forte na maior parte da minha rotina', trait: 'nivel4' },
+      { texto: 'Já não faz mais sentido pra mim — dinheiro é instrumento a serviço de algo maior', trait: 'nivel5' },
+    ]
+  },
+  {
+    texto: 'Quando você vê alguém próximo prosperando financeiramente, o que sente?',
+    opcoes: [
+      { texto: 'Que "nunca vai ser assim comigo"', trait: 'nivel1' },
+      { texto: 'Fico motivado(a) por um dia, mas o ânimo passa rápido', trait: 'nivel2' },
+      { texto: 'Me inspiro, mas às vezes me comparo e desanimo', trait: 'nivel3' },
+      { texto: 'Uso como inspiração real para ajustar meu próprio plano', trait: 'nivel4' },
+      { texto: 'Alegria genuína — sei que há recursos e oportunidades para todos', trait: 'nivel5' },
+    ]
+  },
+  {
+    texto: 'Sobre ter uma reserva de dinheiro para imprevistos...',
+    opcoes: [
+      { texto: 'Não tenho nenhuma, e só de pensar nisso já sinto ansiedade', trait: 'nivel1' },
+      { texto: 'Já tentei guardar várias vezes, mas sempre acabo usando pra outra coisa', trait: 'nivel2' },
+      { texto: 'Tenho uma reserva pequena, que cresce e diminui dependendo da fase', trait: 'nivel3' },
+      { texto: 'Tenho uma reserva e penso nela como parte do meu planejamento', trait: 'nivel4' },
+      { texto: 'Minhas reservas e investimentos são estratégicos, alinhados a objetivos maiores', trait: 'nivel5' },
+    ]
+  },
+  {
+    texto: 'Olhando para os últimos 12 meses da sua vida financeira...',
+    opcoes: [
+      { texto: 'Continuo travado(a) nos mesmos problemas de sempre', trait: 'nivel1' },
+      { texto: 'Tentei mudar várias vezes, mas sempre volto ao ponto de partida', trait: 'nivel2' },
+      { texto: 'Tive avanços reais, com recaídas — foi mais travessia do que linha reta', trait: 'nivel3' },
+      { texto: 'Os alicerces já foram lançados: tenho hábitos consistentes e vejo a estrutura mudando', trait: 'nivel4' },
+      { texto: 'Minha relação com o dinheiro já inspira outras pessoas ao meu redor', trait: 'nivel5' },
+    ]
+  },
+  {
+    texto: 'Quando pensa em realizar algo que exige um dinheiro que você não tem agora...',
+    opcoes: [
+      { texto: 'Penso "nunca vou conseguir" e nem tento buscar um caminho', trait: 'nivel1' },
+      { texto: 'Sei que preciso de recursos, mas não sei como buscá-los e acabo desistindo', trait: 'nivel2' },
+      { texto: 'Às vezes busco soluções, às vezes desisto no meio do caminho', trait: 'nivel3' },
+      { texto: 'Busco recursos e oportunidades, e ajusto o plano quando preciso', trait: 'nivel4' },
+      { texto: 'Penso "posso encontrar recursos e oportunidades para tornar isso realidade"', trait: 'nivel5' },
+    ]
+  },
+];
+
+// Um resultado por nível — baseado no capítulo 1.1 do livro.
+const PERFIS = {
+  nivel1: {
+    titulo: 'Mentalidade Financeira Bloqueada',
+    descricao: 'O dinheiro virou um peso constante na sua mente. Você evita olhar extratos, adia conversas sobre finanças e sente vergonha, medo ou culpa quando o assunto aparece. Crenças antigas dizem que "nunca vai dar certo" ou que "dinheiro não é para você" — e elas decidem por você antes mesmo de tentar. O primeiro passo não é resolver tudo de uma vez: é reconhecer essas grades internas, porque são o primeiro muro que precisa cair.'
+  },
+  nivel2: {
+    titulo: 'Mentalidade Financeira Estagnada',
+    descricao: 'Você já percebe que precisa mudar — já tentou planilhas, aulas, planejamentos — mas não consegue manter o ritmo. Começa animado(a) e desanima logo depois: é como estar com o carro ligado e o freio de mão puxado por dentro. O problema não é falta de informação, é falta de ação consistente. Você vive num "quase": quase organiza, quase começa, quase muda. Esse "quase" é exatamente o que precisa enfrentar agora.'
+  },
+  nivel3: {
+    titulo: 'Mentalidade Financeira em Transição',
+    descricao: 'A mudança já começou dentro de você: registra gastos, tentou organizar as contas, talvez já tenha renegociado dívidas ou iniciado uma reserva. Mas ainda há instabilidade — dias de foco e dias em que os velhos hábitos voltam, seguidos de culpa. Você está atravessando uma ponte: já saiu da margem antiga, mas ainda não chegou à nova. Cada escorregão agora é aprendizado, não fracasso.'
+  },
+  nivel4: {
+    titulo: 'Mentalidade Financeira em Construção',
+    descricao: 'O caos já deu lugar a uma base mais firme. Você sabe quanto ganha, para onde o dinheiro vai, e planeja o mês antes que ele comece. Quando um imprevisto aparece, sente o impacto, ajusta a rota e segue — sem desespero. Nem tudo está pronto, mas os alicerces já foram lançados. A cada decisão consciente, um tijolo novo é colocado na estrutura que vai sustentar tudo que ainda virá.'
+  },
+  nivel5: {
+    titulo: 'Mentalidade Financeira Evoluída',
+    descricao: 'O dinheiro deixou de ser vilão ou ídolo e ocupa o lugar certo: ferramenta a serviço da sua vida e do seu propósito. Você pensa antes de agir, planeja antes de gastar, investe com consciência e doa com generosidade. Suas escolhas não nascem de culpa ou pressa, mas dos seus valores — e isso já inspira outras pessoas. Você sabe: não chegou a um fim, mas a um novo começo.'
+  },
+};
+
+// URL do Web App do Google Apps Script (ver quiz/apps-script/Code.gs) que
+// grava a resposta como uma nova linha na planilha, imediatamente ao enviar.
+const SAVE_URL = 'https://script.google.com/macros/s/AKfycbyUCVeiJNqI4437sITH0AOcG-85ExJvXWWpU63NsV2vWvj1A4LWeUE0OiZkLylFxtyoVA/exec';
+
+// ═══════════════════════════════════
+// ESTADO
+// ═══════════════════════════════════
+let nome = '';
+let email = '';
+let telefone = '';
+let qi = 0;
+let respostas = new Array(QUESTIONS.length).fill(null);
+
+function showSec(id) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function startQuiz() {
+  const n = document.getElementById('in-nome').value.trim();
+  const e = document.getElementById('in-email').value.trim();
+  const t = document.getElementById('in-telefone').value.trim();
+  const err = document.getElementById('start-err');
+  if (!n) { err.textContent = 'Informe seu nome.'; err.style.display = 'block'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) { err.textContent = 'Informe um e-mail válido.'; err.style.display = 'block'; return; }
+  if (!t) { err.textContent = 'Informe seu telefone.'; err.style.display = 'block'; return; }
+  err.style.display = 'none';
+  nome = n; email = e; telefone = t; qi = 0;
+  respostas = new Array(QUESTIONS.length).fill(null);
+  renderQ();
+  showSec('sec-quiz');
+}
+
+function renderQ() {
+  const q = QUESTIONS[qi];
+  document.getElementById('q-n').textContent = qi + 1;
+  document.getElementById('q-tot').textContent = QUESTIONS.length;
+  const pct = Math.round(((qi + 1) / QUESTIONS.length) * 100);
+  document.getElementById('q-pct').textContent = pct + '%';
+  document.getElementById('q-fill').style.width = pct + '%';
+  document.getElementById('q-text').textContent = q.texto;
+
+  const wrap = document.getElementById('q-opts');
+  wrap.innerHTML = '';
+  q.opcoes.forEach((op, oi) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (respostas[qi] === oi ? ' sel' : '');
+    div.innerHTML = '<div class="opt-dot"></div><div class="opt-txt"></div>';
+    div.querySelector('.opt-txt').textContent = op.texto;
+    div.onclick = () => selectOpt(oi);
+    wrap.appendChild(div);
+  });
+
+  document.getElementById('btn-back').style.visibility = qi === 0 ? 'hidden' : 'visible';
+  document.getElementById('btn-next').disabled = respostas[qi] === null;
+  document.getElementById('btn-next').textContent = qi === QUESTIONS.length - 1 ? 'Ver resultado →' : 'Próxima →';
+}
+
+function selectOpt(oi) {
+  respostas[qi] = oi;
+  renderQ();
+}
+
+function prevQ() {
+  if (qi === 0) return;
+  qi--;
+  renderQ();
+}
+
+function nextQ() {
+  if (respostas[qi] === null) return;
+  if (qi < QUESTIONS.length - 1) {
+    qi++;
+    renderQ();
+  } else {
+    finishQuiz();
+  }
+}
+
+function computeProfile() {
+  const counts = {};
+  QUESTIONS.forEach((q, i) => {
+    const oi = respostas[i];
+    if (oi === null) return;
+    const trait = q.opcoes[oi].trait;
+    counts[trait] = (counts[trait] || 0) + 1;
+  });
+  let best = null, bestN = -1;
+  Object.keys(counts).forEach(k => {
+    if (counts[k] > bestN) { bestN = counts[k]; best = k; }
+  });
+  return best;
+}
+
+async function finishQuiz() {
+  showSec('sec-sending');
+
+  const perfilChave = computeProfile();
+  const perfil = PERFIS[perfilChave] || { titulo: 'Resultado', descricao: '' };
+
+  const payload = {
+    nome,
+    email,
+    telefone,
+    perfilChave,
+    perfilTitulo: perfil.titulo,
+    perfilDescricao: perfil.descricao,
+    respostas: QUESTIONS.map((q, i) => ({
+      pergunta: q.texto,
+      resposta: respostas[i] !== null ? q.opcoes[respostas[i]].texto : null,
+      trait: respostas[i] !== null ? q.opcoes[respostas[i]].trait : null,
+    })),
+  };
+
+  let saved = true;
+  try {
+    // mode:'no-cors' porque o Web App do Apps Script não devolve cabeçalho
+    // Access-Control-Allow-Origin — sem isso o navegador bloqueia a chamada
+    // inteira. Em troca, a resposta vem opaca (não dá pra ler o "ok"), mas
+    // o POST chega e o Apps Script grava a linha normalmente do lado dele.
+    // Content-Type text/plain evita o preflight, que o Web App não responde.
+    await fetch(SAVE_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
+    });
+  } catch (e) {
+    saved = false;
+  }
+
+  document.getElementById('res-title').textContent = perfil.titulo;
+  document.getElementById('res-desc').textContent = perfil.descricao;
+  document.getElementById('res-warn').style.display = saved ? 'none' : 'block';
+  showSec('sec-result');
+}
+
+function restart() {
+  document.getElementById('in-nome').value = '';
+  document.getElementById('in-email').value = '';
+  document.getElementById('in-telefone').value = '';
+  showSec('sec-start');
+}
+</script>
+</body>
+</html>
