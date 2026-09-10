@@ -1,6 +1,6 @@
 # Quiz — Mentalidade Financeira
 
-Quiz (nome + 9 perguntas de múltipla escolha) que diagnostica o nível de
+Quiz (nome, e-mail, telefone + 9 perguntas de múltipla escolha) que diagnostica o nível de
 mentalidade financeira de quem responde e grava a resposta imediatamente
 como uma nova linha numa planilha Google, via Google Apps Script — sem
 precisar de servidor ou banco de dados próprios. As perguntas e os 5
@@ -35,11 +35,13 @@ quiz/
    `const SAVE_URL = ...`) por essa URL.
 7. Publique/suba o `quiz/index.html`. Cada resposta enviada cria
    automaticamente uma aba "Respostas" na planilha com data/hora, nome,
-   perfil e o detalhe de cada resposta.
+   e-mail, telefone, perfil e o detalhe de cada resposta.
 
-Se você editar `Code.gs` depois, é preciso ir em **Implantar → Gerenciar
+Se você editar `Code.gs` depois (inclusive ao atualizar para uma versão
+mais nova deste repositório), é preciso ir em **Implantar → Gerenciar
 implantações → editar (ícone de lápis) → Nova versão** para as mudanças
-valerem na URL já publicada.
+valerem na URL já publicada — só colar o código novo e salvar não é
+suficiente.
 
 ## Editar perguntas ou resultados
 

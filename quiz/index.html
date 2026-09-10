@@ -63,7 +63,7 @@ header { text-align: center; margin-bottom: 40px; }
 .panel { background: var(--s1); border: 1px solid var(--bd); border-radius: var(--r); padding: 24px; margin-bottom: 14px; box-shadow: 0 2px 16px rgba(138,101,31,0.06); }
 
 label { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-input[type=text] {
+input[type=text], input[type=email], input[type=tel] {
   width: 100%; background: var(--s2); border: 1px solid var(--bd); border-radius: 8px;
   color: var(--ink); font-family: var(--fb); font-size: 14px; padding: 11px 12px;
   outline: none; transition: border 0.2s; margin-bottom: 14px;
@@ -127,6 +127,10 @@ input:focus { border-color: rgba(138,101,31,0.5); }
     <div class="panel">
       <label>Nome</label>
       <input type="text" id="in-nome" placeholder="Seu nome completo" autocomplete="name">
+      <label>E-mail</label>
+      <input type="email" id="in-email" placeholder="seu@email.com" autocomplete="email">
+      <label>Telefone</label>
+      <input type="tel" id="in-telefone" placeholder="(00) 00000-0000" autocomplete="tel">
       <div class="err-box" id="start-err"></div>
     </div>
     <div class="btn-row">
@@ -306,6 +310,8 @@ const SAVE_URL = 'https://script.google.com/macros/s/AKfycbyUCVeiJNqI4437sITH0AO
 // ESTADO
 // ═══════════════════════════════════
 let nome = '';
+let email = '';
+let telefone = '';
 let qi = 0;
 let respostas = new Array(QUESTIONS.length).fill(null);
 
@@ -317,10 +323,14 @@ function showSec(id) {
 
 function startQuiz() {
   const n = document.getElementById('in-nome').value.trim();
+  const e = document.getElementById('in-email').value.trim();
+  const t = document.getElementById('in-telefone').value.trim();
   const err = document.getElementById('start-err');
   if (!n) { err.textContent = 'Informe seu nome.'; err.style.display = 'block'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) { err.textContent = 'Informe um e-mail válido.'; err.style.display = 'block'; return; }
+  if (!t) { err.textContent = 'Informe seu telefone.'; err.style.display = 'block'; return; }
   err.style.display = 'none';
-  nome = n; qi = 0;
+  nome = n; email = e; telefone = t; qi = 0;
   respostas = new Array(QUESTIONS.length).fill(null);
   renderQ();
   showSec('sec-quiz');
@@ -395,6 +405,8 @@ async function finishQuiz() {
 
   const payload = {
     nome,
+    email,
+    telefone,
     perfilChave,
     perfilTitulo: perfil.titulo,
     respostas: QUESTIONS.map((q, i) => ({
@@ -429,6 +441,8 @@ async function finishQuiz() {
 
 function restart() {
   document.getElementById('in-nome').value = '';
+  document.getElementById('in-email').value = '';
+  document.getElementById('in-telefone').value = '';
   showSec('sec-start');
 }
 </script>

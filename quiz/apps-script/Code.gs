@@ -6,7 +6,7 @@
  */
 
 const SHEET_NAME = 'Respostas';
-const HEADER = ['Data/Hora', 'Nome', 'Perfil', 'Respostas'];
+const HEADER = ['Data/Hora', 'Nome', 'E-mail', 'Telefone', 'Perfil', 'Respostas'];
 
 function doPost(e) {
   let lock;
@@ -21,10 +21,12 @@ function doPost(e) {
     const body = JSON.parse(e.postData.contents);
 
     const nome = String(body.nome || '').trim().slice(0, 150);
+    const email = String(body.email || '').trim().slice(0, 150);
+    const telefone = String(body.telefone || '').trim().slice(0, 50);
     const perfilTitulo = String(body.perfilTitulo || '').trim().slice(0, 150);
     const respostas = Array.isArray(body.respostas) ? body.respostas : [];
 
-    if (!nome || !perfilTitulo) {
+    if (!nome || !email || !telefone || !perfilTitulo) {
       return jsonResponse({ ok: false, erro: 'Dados inválidos' });
     }
 
@@ -33,7 +35,7 @@ function doPost(e) {
       .join(' | ');
 
     const sheet = getSheet();
-    sheet.appendRow([new Date(), nome, perfilTitulo, respostasTexto]);
+    sheet.appendRow([new Date(), nome, email, telefone, perfilTitulo, respostasTexto]);
 
     return jsonResponse({ ok: true });
   } catch (err) {
