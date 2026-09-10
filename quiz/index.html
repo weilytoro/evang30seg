@@ -406,15 +406,17 @@ async function finishQuiz() {
 
   let saved = true;
   try {
-    // Content-Type text/plain evita o preflight CORS que o Web App do
-    // Apps Script não responde — o corpo continua sendo JSON válido.
-    const res = await fetch(SAVE_URL, {
+    // mode:'no-cors' porque o Web App do Apps Script não devolve cabeçalho
+    // Access-Control-Allow-Origin — sem isso o navegador bloqueia a chamada
+    // inteira. Em troca, a resposta vem opaca (não dá pra ler o "ok"), mas
+    // o POST chega e o Apps Script grava a linha normalmente do lado dele.
+    // Content-Type text/plain evita o preflight, que o Web App não responde.
+    await fetch(SAVE_URL, {
       method: 'POST',
+      mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload),
     });
-    const data = await res.json().catch(() => ({ ok: false }));
-    saved = !!data.ok;
   } catch (e) {
     saved = false;
   }
