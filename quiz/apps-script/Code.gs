@@ -9,9 +9,15 @@ const SHEET_NAME = 'Respostas';
 const HEADER = ['Data/Hora', 'Nome', 'Perfil', 'Respostas'];
 
 function doPost(e) {
-  const lock = LockService.getScriptLock();
-  lock.waitLock(10000);
+  let lock;
   try {
+    lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+
+    if (!e || !e.postData || !e.postData.contents) {
+      throw new Error('Requisição sem corpo (e.postData ausente)');
+    }
+
     const body = JSON.parse(e.postData.contents);
 
     const nome = String(body.nome || '').trim().slice(0, 150);
@@ -31,9 +37,10 @@ function doPost(e) {
 
     return jsonResponse({ ok: true });
   } catch (err) {
+    console.error('doPost falhou: ' + err + (err && err.stack ? '\n' + err.stack : ''));
     return jsonResponse({ ok: false, erro: String(err) });
   } finally {
-    lock.releaseLock();
+    if (lock) lock.releaseLock();
   }
 }
 
