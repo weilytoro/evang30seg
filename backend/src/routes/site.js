@@ -9,6 +9,17 @@ const router = express.Router();
 const IMAGE_DATA_URL_RE = /^data:image\/(png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=]+$/;
 const MAX_IMAGE_DATA_URL_LENGTH = 5 * 1024 * 1024; // ~3.6MB de imagem original
 
+// Textos originais do protótipo — usados quando o admin ainda não editou o
+// campo pelo painel (coluna NULL no banco), para o site continuar igual até
+// alguém decidir trocar.
+const DEFAULTS = {
+  heroEyebrow: 'Faça o dinheiro trabalhar por você',
+  heroTitlePrefix: 'Desperte a sua',
+  heroTitleHighlight: 'mentalidade financeira',
+  heroSubtitle: 'Ideias claras sobre dinheiro, investimentos e hábitos que fazem sua renda trabalhar por você.',
+  footerTagline: 'Educação que transforma',
+};
+
 function getSettings() {
   return db.prepare('SELECT * FROM site_settings WHERE id = 1').get();
 }
@@ -31,6 +42,13 @@ router.get('/', (req, res) => {
     },
     logoImage: s.logo_image,
     aboutImage: s.about_image,
+    hero: {
+      eyebrow: s.hero_eyebrow || DEFAULTS.heroEyebrow,
+      titlePrefix: s.hero_title_prefix || DEFAULTS.heroTitlePrefix,
+      titleHighlight: s.hero_title_highlight || DEFAULTS.heroTitleHighlight,
+      subtitle: s.hero_subtitle || DEFAULTS.heroSubtitle,
+    },
+    footerTagline: s.footer_tagline || DEFAULTS.footerTagline,
   });
 });
 
@@ -78,6 +96,38 @@ router.put('/about-image', requireAdmin, (req, res) => {
 
   db.prepare('UPDATE site_settings SET about_image = ? WHERE id = 1').run(image);
   res.json({ aboutImage: image });
+});
+
+router.put('/hero', requireAdmin, (req, res) => {
+  const { eyebrow, titlePrefix, titleHighlight, subtitle } = req.body || {};
+
+  if (![eyebrow, titlePrefix, titleHighlight, subtitle].every((v) => v && String(v).trim())) {
+    return res.status(400).json({ error: 'Preencha todos os campos do destaque principal.' });
+  }
+
+  const next = {
+    eyebrow: String(eyebrow).trim(),
+    titlePrefix: String(titlePrefix).trim(),
+    titleHighlight: String(titleHighlight).trim(),
+    subtitle: String(subtitle).trim(),
+  };
+
+  db.prepare(
+    'UPDATE site_settings SET hero_eyebrow = ?, hero_title_prefix = ?, hero_title_highlight = ?, hero_subtitle = ? WHERE id = 1'
+  ).run(next.eyebrow, next.titlePrefix, next.titleHighlight, next.subtitle);
+
+  res.json({ hero: next });
+});
+
+router.put('/footer', requireAdmin, (req, res) => {
+  const { tagline } = req.body || {};
+  if (!tagline || !String(tagline).trim()) {
+    return res.status(400).json({ error: 'O texto não pode ficar vazio.' });
+  }
+
+  const value = String(tagline).trim();
+  db.prepare('UPDATE site_settings SET footer_tagline = ? WHERE id = 1').run(value);
+  res.json({ footerTagline: value });
 });
 
 module.exports = router;

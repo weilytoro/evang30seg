@@ -105,6 +105,23 @@ const aboutImageEditTrigger = document.getElementById('about-image-edit-trigger'
 const aboutImageFileInput = document.getElementById('about-image-file-input');
 const aboutImageImg = document.getElementById('about-image-img');
 
+const heroEditTrigger = document.getElementById('hero-edit-trigger');
+const heroForm = document.getElementById('hero-form');
+const heroEyebrowEl = document.getElementById('hero-eyebrow');
+const heroTitlePrefixEl = document.getElementById('hero-title-prefix');
+const heroTitleHighlightEl = document.getElementById('hero-title-highlight');
+const heroSubtitleEl = document.getElementById('hero-subtitle');
+const heroEyebrowInput = document.getElementById('hero-eyebrow-input');
+const heroTitlePrefixInput = document.getElementById('hero-title-prefix-input');
+const heroTitleHighlightInput = document.getElementById('hero-title-highlight-input');
+const heroSubtitleInput = document.getElementById('hero-subtitle-input');
+
+const footerEditTrigger = document.getElementById('footer-edit-trigger');
+const footerForm = document.getElementById('footer-form');
+const footerCopyright = document.getElementById('footer-copyright');
+const footerTaglineEl = document.getElementById('footer-tagline');
+const footerTaglineInput = document.getElementById('footer-tagline-input');
+
 const contactEditTrigger = document.getElementById('contact-edit-trigger');
 const contactForm = document.getElementById('contact-form');
 const contactInstagram = document.getElementById('contact-instagram');
@@ -235,6 +252,9 @@ function updateAccessUI() {
 
     logoEditTrigger.classList.remove('hide');
     aboutImageEditTrigger.classList.remove('hide');
+
+    heroEditTrigger.classList.remove('hide');
+    footerEditTrigger.classList.remove('hide');
   } else {
     publishLocked.classList.remove('hide');
     publishForm.classList.add('hide');
@@ -260,6 +280,12 @@ function updateAccessUI() {
 
     logoEditTrigger.classList.add('hide');
     aboutImageEditTrigger.classList.add('hide');
+
+    heroEditTrigger.classList.add('hide');
+    heroForm.classList.add('hide');
+
+    footerEditTrigger.classList.add('hide');
+    footerForm.classList.add('hide');
   }
 }
 
@@ -722,12 +748,77 @@ contactForm.addEventListener('submit', async function (e) {
   }
 });
 
+// Destaque principal / hero (admin)
+function renderHero(hero) {
+  heroEyebrowEl.textContent = hero.eyebrow;
+  heroTitlePrefixEl.textContent = hero.titlePrefix;
+  heroTitleHighlightEl.textContent = hero.titleHighlight;
+  heroSubtitleEl.textContent = hero.subtitle;
+}
+
+heroEditTrigger.addEventListener('click', function () {
+  heroEyebrowInput.value = heroEyebrowEl.textContent;
+  heroTitlePrefixInput.value = heroTitlePrefixEl.textContent;
+  heroTitleHighlightInput.value = heroTitleHighlightEl.textContent;
+  heroSubtitleInput.value = heroSubtitleEl.textContent;
+  heroForm.classList.remove('hide');
+});
+
+heroForm.addEventListener('submit', async function (e) {
+  e.preventDefault();
+  if (!isAdmin()) return;
+
+  const body = {
+    eyebrow: heroEyebrowInput.value.trim(),
+    titlePrefix: heroTitlePrefixInput.value.trim(),
+    titleHighlight: heroTitleHighlightInput.value.trim(),
+    subtitle: heroSubtitleInput.value.trim(),
+  };
+
+  try {
+    const data = await api('/site/hero', { method: 'PUT', body: JSON.stringify(body) });
+    renderHero(data.hero);
+    heroForm.classList.add('hide');
+  } catch (err) {
+    alert(err.message);
+  }
+});
+
+// Rodapé (admin)
+function renderFooterTagline(tagline) {
+  footerTaglineEl.textContent = tagline;
+}
+
+footerEditTrigger.addEventListener('click', function () {
+  footerTaglineInput.value = footerTaglineEl.textContent;
+  footerForm.classList.remove('hide');
+});
+
+footerForm.addEventListener('submit', async function (e) {
+  e.preventDefault();
+  if (!isAdmin()) return;
+
+  const tagline = footerTaglineInput.value.trim();
+
+  try {
+    const data = await api('/site/footer', { method: 'PUT', body: JSON.stringify({ tagline: tagline }) });
+    renderFooterTagline(data.footerTagline);
+    footerForm.classList.add('hide');
+  } catch (err) {
+    alert(err.message);
+  }
+});
+
+footerCopyright.textContent = '© ' + new Date().getFullYear() + ' Dinheiro chama dinheiro?';
+
 async function loadSite() {
   const data = await api('/site');
   renderSiteAbout(data.about);
   renderSiteContact(data.contact);
   if (data.logoImage) siteLogoImg.src = data.logoImage;
   if (data.aboutImage) aboutImageImg.src = data.aboutImage;
+  renderHero(data.hero);
+  renderFooterTagline(data.footerTagline);
 }
 
 // Mentoria — qualquer visitante pode enviar seu contato

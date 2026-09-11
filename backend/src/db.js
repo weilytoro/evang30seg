@@ -71,7 +71,12 @@ db.exec(`
     contact_email TEXT,
     contact_phone TEXT,
     logo_image TEXT,
-    about_image TEXT
+    about_image TEXT,
+    hero_eyebrow TEXT,
+    hero_title_prefix TEXT,
+    hero_title_highlight TEXT,
+    hero_subtitle TEXT,
+    footer_tagline TEXT
   );
 
   CREATE TABLE IF NOT EXISTS mentorship_leads (
@@ -105,6 +110,11 @@ ensureColumn('users', 'verify_token_hash', 'TEXT');
 ensureColumn('users', 'verify_token_expires', 'TEXT');
 ensureColumn('site_settings', 'logo_image', 'TEXT');
 ensureColumn('site_settings', 'about_image', 'TEXT');
+ensureColumn('site_settings', 'hero_eyebrow', 'TEXT');
+ensureColumn('site_settings', 'hero_title_prefix', 'TEXT');
+ensureColumn('site_settings', 'hero_title_highlight', 'TEXT');
+ensureColumn('site_settings', 'hero_subtitle', 'TEXT');
+ensureColumn('site_settings', 'footer_tagline', 'TEXT');
 
 db.prepare(
   `INSERT OR IGNORE INTO site_settings (id, about_text, contact_instagram, contact_email, contact_phone)

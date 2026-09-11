@@ -259,6 +259,30 @@
     margin: 0 auto;
   }
 
+  .hero .edit-btn { margin-top: 1.2rem; }
+
+  #hero-form {
+    display: grid;
+    gap: 0.8rem;
+    margin: 1.2rem auto 0;
+    max-width: 46ch;
+    text-align: left;
+  }
+
+  #hero-form button {
+    justify-self: start;
+    background: var(--gold-deep);
+    color: var(--white);
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.3rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  #hero-form button:hover { background: #6E5310; }
+
   .site-logo {
     width: 2.4rem;
     height: 2.4rem;
@@ -942,11 +966,37 @@
     padding: 2.5rem 1.5rem 3.5rem;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 0.82rem;
     color: var(--muted);
     flex-wrap: wrap;
     gap: 0.6rem;
   }
+
+  #footer-tagline-wrap { display: flex; align-items: center; gap: 0.6rem; }
+
+  #footer-form {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  #footer-form .field { flex: 1; min-width: 200px; }
+
+  #footer-form button {
+    background: var(--gold-deep);
+    color: var(--white);
+    border: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.6rem 1.1rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  #footer-form button:hover { background: #6E5310; }
 
   @media (max-width: 860px) {
     .nav-toggle { display: flex; }
@@ -1043,9 +1093,31 @@
 <main>
 
   <section class="hero" id="inicio">
-    <div class="eyebrow">Faça o dinheiro trabalhar por você</div>
-    <h1>Desperte a sua <em>mentalidade financeira</em></h1>
-    <p>Ideias claras sobre dinheiro, investimentos e hábitos que fazem sua renda trabalhar por você.</p>
+    <div class="eyebrow" id="hero-eyebrow">Faça o dinheiro trabalhar por você</div>
+    <h1 id="hero-title"><span id="hero-title-prefix">Desperte a sua</span> <em id="hero-title-highlight">mentalidade financeira</em></h1>
+    <p id="hero-subtitle">Ideias claras sobre dinheiro, investimentos e hábitos que fazem sua renda trabalhar por você.</p>
+    <button id="hero-edit-trigger" class="edit-btn hide">Editar</button>
+    <form id="hero-form" class="hide">
+      <div class="field">
+        <label for="hero-eyebrow-input">Selo (texto pequeno acima do título)</label>
+        <input type="text" id="hero-eyebrow-input" required>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label for="hero-title-prefix-input">Início do título</label>
+          <input type="text" id="hero-title-prefix-input" required>
+        </div>
+        <div class="field">
+          <label for="hero-title-highlight-input">Parte destacada do título</label>
+          <input type="text" id="hero-title-highlight-input" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="hero-subtitle-input">Texto abaixo do título</label>
+        <textarea id="hero-subtitle-input" rows="2" required></textarea>
+      </div>
+      <button type="submit">Salvar</button>
+    </form>
   </section>
 
   <section class="posts" id="posts">
@@ -1302,8 +1374,18 @@
 </main>
 
 <footer class="site">
-  <span>© 2026 Dinheiro chama dinheiro?</span>
-  <span>Educação que transforma</span>
+  <span id="footer-copyright">© 2026 Dinheiro chama dinheiro?</span>
+  <span id="footer-tagline-wrap">
+    <span id="footer-tagline">Educação que transforma</span>
+    <button id="footer-edit-trigger" class="edit-btn hide">Editar</button>
+  </span>
+  <form id="footer-form" class="hide">
+    <div class="field">
+      <label for="footer-tagline-input">Frase do rodapé</label>
+      <input type="text" id="footer-tagline-input" required>
+    </div>
+    <button type="submit">Salvar</button>
+  </form>
 </footer>
 
 <!-- Login modal -->
