@@ -54,9 +54,11 @@ Todas as rotas ficam sob `/api`. Corpo e respostas em JSON.
 | POST | `/api/media` | admin | Cria item de mídia |
 | GET | `/api/events` | público | Lista eventos |
 | POST | `/api/events` | admin | Cria evento |
-| GET | `/api/site` | público | Texto "Sobre nós" + contato |
+| GET | `/api/site` | público | Texto "Sobre nós", contato e fotos (logo/ilustração) |
 | PUT | `/api/site/about` | admin | Atualiza texto "Sobre nós" |
 | PUT | `/api/site/contact` | admin | Atualiza Instagram/e-mail/telefone |
+| PUT | `/api/site/logo` | admin | Troca a foto da logo no cabeçalho (`image`: data URL base64) |
+| PUT | `/api/site/about-image` | admin | Troca a ilustração de "Sobre nós" (`image`: data URL base64) |
 | POST | `/api/leads/mentorship` | público | Envia contato de mentoria |
 | POST | `/api/leads/newsletter` | público | Cadastra e-mail na newsletter |
 | GET | `/api/leads/mentorship` | admin | Lista contatos de mentoria recebidos |
