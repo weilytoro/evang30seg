@@ -39,7 +39,8 @@ if (FORCE_HTTPS) {
 // são bloqueadas por padrão.
 app.use(cors(CORS_ORIGIN ? { origin: CORS_ORIGIN.split(',').map((o) => o.trim()) } : { origin: false }));
 
-app.use(express.json());
+// Limite elevado para acomodar as fotos (logo/Sobre nós) enviadas como data URL base64.
+app.use(express.json({ limit: '6mb' }));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postsRoutes);

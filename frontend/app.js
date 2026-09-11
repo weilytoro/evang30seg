@@ -97,6 +97,14 @@ const aboutText = document.getElementById('about-text');
 const aboutForm = document.getElementById('about-form');
 const aboutTextarea = document.getElementById('about-textarea');
 
+const logoEditTrigger = document.getElementById('logo-edit-trigger');
+const logoFileInput = document.getElementById('logo-file-input');
+const siteLogoImg = document.getElementById('site-logo-img');
+
+const aboutImageEditTrigger = document.getElementById('about-image-edit-trigger');
+const aboutImageFileInput = document.getElementById('about-image-file-input');
+const aboutImageImg = document.getElementById('about-image-img');
+
 const contactEditTrigger = document.getElementById('contact-edit-trigger');
 const contactForm = document.getElementById('contact-form');
 const contactInstagram = document.getElementById('contact-instagram');
@@ -224,6 +232,9 @@ function updateAccessUI() {
 
     aboutEditTrigger.classList.remove('hide');
     contactEditTrigger.classList.remove('hide');
+
+    logoEditTrigger.classList.remove('hide');
+    aboutImageEditTrigger.classList.remove('hide');
   } else {
     publishLocked.classList.remove('hide');
     publishForm.classList.add('hide');
@@ -246,6 +257,9 @@ function updateAccessUI() {
 
     contactEditTrigger.classList.add('hide');
     contactForm.classList.add('hide');
+
+    logoEditTrigger.classList.add('hide');
+    aboutImageEditTrigger.classList.add('hide');
   }
 }
 
@@ -597,6 +611,64 @@ aboutForm.addEventListener('submit', async function (e) {
   }
 });
 
+// Fotos (logo do cabeçalho e imagem de "Sobre nós") — admin
+const MAX_UPLOAD_SOURCE_BYTES = 15 * 1024 * 1024; // limite generoso antes de redimensionar no navegador
+
+function resizeImageToDataUrl(file, maxDimension, quality) {
+  return new Promise(function (resolve, reject) {
+    if (!file.type || file.type.indexOf('image/') !== 0) {
+      reject(new Error('Selecione um arquivo de imagem.'));
+      return;
+    }
+    if (file.size > MAX_UPLOAD_SOURCE_BYTES) {
+      reject(new Error('Imagem muito grande. Escolha um arquivo de até 15MB.'));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onerror = function () { reject(new Error('Não foi possível ler a imagem.')); };
+    reader.onload = function () {
+      const img = new Image();
+      img.onerror = function () { reject(new Error('Não foi possível abrir a imagem.')); };
+      img.onload = function () {
+        const scale = Math.min(1, maxDimension / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function setupPhotoUpload(trigger, fileInput, imgEl, endpoint, responseKey, maxDimension) {
+  trigger.addEventListener('click', function () {
+    if (!isAdmin()) return;
+    fileInput.click();
+  });
+
+  fileInput.addEventListener('change', async function () {
+    const file = fileInput.files && fileInput.files[0];
+    fileInput.value = '';
+    if (!file || !isAdmin()) return;
+
+    try {
+      const dataUrl = await resizeImageToDataUrl(file, maxDimension, 0.85);
+      const data = await api(endpoint, { method: 'PUT', body: JSON.stringify({ image: dataUrl }) });
+      imgEl.src = data[responseKey];
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+}
+
+setupPhotoUpload(logoEditTrigger, logoFileInput, siteLogoImg, '/site/logo', 'logoImage', 400);
+setupPhotoUpload(aboutImageEditTrigger, aboutImageFileInput, aboutImageImg, '/site/about-image', 'aboutImage', 1200);
+
 // Contato (admin)
 function renderSiteContact(contact) {
   const any = contact.instagram || contact.email || contact.phone;
@@ -654,6 +726,8 @@ async function loadSite() {
   const data = await api('/site');
   renderSiteAbout(data.about);
   renderSiteContact(data.contact);
+  if (data.logoImage) siteLogoImg.src = data.logoImage;
+  if (data.aboutImage) aboutImageImg.src = data.aboutImage;
 }
 
 // Mentoria — qualquer visitante pode enviar seu contato
