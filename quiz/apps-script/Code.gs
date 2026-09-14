@@ -47,17 +47,10 @@ function doPost(e) {
   }
 }
 
-// GET /exec?callback=fn devolve, via JSONP, a contagem de respostas por
-// nível (sem nome/e-mail/telefone/respostas) — usado pelo dashboard.html.
+// GET /exec devolve a contagem de respostas por nível (sem nome, e-mail,
+// telefone ou respostas individuais) — usado pelo dashboard.html.
 function doGet(e) {
-  const counts = getNivelCounts();
-  const callback = e && e.parameter && e.parameter.callback;
-  if (callback && /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(callback)) {
-    return ContentService
-      .createTextOutput(callback + '(' + JSON.stringify(counts) + ')')
-      .setMimeType(ContentService.MimeType.JAVASCRIPT);
-  }
-  return jsonResponse({ ok: true, counts });
+  return jsonResponse({ ok: true, counts: getNivelCounts() });
 }
 
 function getNivelCounts() {

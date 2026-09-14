@@ -211,28 +211,17 @@ function render(counts) {
     'Atualizado às ' + new Date().toLocaleTimeString('pt-BR');
 }
 
-function loadData() {
+async function loadData() {
   setState('loading');
-  const cbName = 'onDashboardData_' + Date.now();
-  const timeout = setTimeout(() => {
-    if (window[cbName]) { delete window[cbName]; setState('error'); }
-  }, 10000);
-
-  window[cbName] = function (counts) {
-    clearTimeout(timeout);
-    delete window[cbName];
-    script.remove();
-    render(counts);
-  };
-
-  const script = document.createElement('script');
-  script.src = SAVE_URL + (SAVE_URL.includes('?') ? '&' : '?') + 'callback=' + cbName;
-  script.onerror = function () {
-    clearTimeout(timeout);
-    delete window[cbName];
+  try {
+    const res = await fetch(SAVE_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    render(data.counts || {});
+  } catch (err) {
+    console.error('Falha ao carregar o painel:', err);
     setState('error');
-  };
-  document.body.appendChild(script);
+  }
 }
 
 document.getElementById('btn-refresh').addEventListener('click', loadData);
