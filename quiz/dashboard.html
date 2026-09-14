@@ -155,19 +155,29 @@ function render(counts) {
   svg.innerHTML = '';
   const cx = 110, cy = 110, r = 100;
   let angle = 0;
+  const nivelComValor = NIVEIS.filter(n => counts[n.key] > 0);
 
-  NIVEIS.forEach(n => {
-    const val = counts[n.key] || 0;
-    if (!val) return;
-    const slice = (val / total) * 360;
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', arcPath(cx, cy, r, angle, angle + slice));
-    path.setAttribute('fill', n.cor);
-    path.setAttribute('stroke', '#ffffff');
-    path.setAttribute('stroke-width', '2');
-    svg.appendChild(path);
-    angle += slice;
-  });
+  if (nivelComValor.length === 1) {
+    // Uma fatia de 360° é um caso degenerado para path de arco SVG (o ponto
+    // inicial e final coincidem e nada é desenhado) — usa um círculo cheio.
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', r);
+    circle.setAttribute('fill', nivelComValor[0].cor);
+    svg.appendChild(circle);
+  } else {
+    NIVEIS.forEach(n => {
+      const val = counts[n.key] || 0;
+      if (!val) return;
+      const slice = (val / total) * 360;
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', arcPath(cx, cy, r, angle, angle + slice));
+      path.setAttribute('fill', n.cor);
+      path.setAttribute('stroke', '#ffffff');
+      path.setAttribute('stroke-width', '2');
+      svg.appendChild(path);
+      angle += slice;
+    });
+  }
 
   const hole = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   hole.setAttribute('cx', cx); hole.setAttribute('cy', cy); hole.setAttribute('r', 58);
