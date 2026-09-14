@@ -180,8 +180,9 @@ input:focus { border-color: rgba(138,101,31,0.5); }
 // PERGUNTAS — Diagnóstico de mentalidade financeira
 // Baseado no capítulo 1 do livro "Dinheiro Chama Dinheiro? Só se você
 // mudar sua mentalidade" (Weily Toro Machado): as 8 primeiras vêm da seção
-// 1.1 ("Qual o seu nível de mentalidade financeira?"); a última é bônus,
-// baseada na mentalidade de abundância x escassez das seções 1.1/1.2.
+// 1.1 ("Qual o seu nível de mentalidade financeira?"); a 9ª é bônus, baseada
+// na mentalidade de abundância x escassez das seções 1.1/1.2; a 10ª é uma
+// pergunta de concordância (escala 1-5) sobre a frase-título do livro.
 // Cada opção tem um trait de nivel1 (Bloqueada) a nivel5 (Evoluída); ao
 // final, o nível com mais ocorrências entre as respostas é o exibido.
 // ═══════════════════════════════════
@@ -274,6 +275,16 @@ const QUESTIONS = [
       { texto: 'Às vezes busco soluções, às vezes desisto no meio do caminho', trait: 'nivel3' },
       { texto: 'Busco recursos e oportunidades, e ajusto o plano quando preciso', trait: 'nivel4' },
       { texto: 'Penso "posso encontrar recursos e oportunidades para tornar isso realidade"', trait: 'nivel5' },
+    ]
+  },
+  {
+    texto: 'Dinheiro chama dinheiro? Numa escala de 1 a 5, o quanto você concorda com essa frase?',
+    opcoes: [
+      { texto: '1 — Discordo totalmente: dinheiro é sorte ou destino, não tem a ver comigo', trait: 'nivel1' },
+      { texto: '2 — Discordo: até queria acreditar, mas não vejo isso acontecer na minha vida', trait: 'nivel2' },
+      { texto: '3 — Neutro: às vezes acredito, às vezes acho que é só conversa', trait: 'nivel3' },
+      { texto: '4 — Concordo: dinheiro atrai dinheiro quando a gente cuida bem dele', trait: 'nivel4' },
+      { texto: '5 — Concordo totalmente: já vivo isso na prática — meu dinheiro trabalha e multiplica', trait: 'nivel5' },
     ]
   },
 ];

@@ -1,14 +1,15 @@
 # Quiz — Mentalidade Financeira
 
-Quiz (nome, e-mail, telefone + 9 perguntas de múltipla escolha) que diagnostica o nível de
+Quiz (nome, e-mail, telefone + 10 perguntas de múltipla escolha) que diagnostica o nível de
 mentalidade financeira de quem responde e grava a resposta imediatamente
 como uma nova linha numa planilha Google, via Google Apps Script — sem
 precisar de servidor ou banco de dados próprios. As perguntas e os 5
 resultados (Bloqueada, Estagnada, Em Transição, Em Construção, Evoluída)
 são baseados no texto real do capítulo 1 do livro *Dinheiro Chama Dinheiro?
 Só se você mudar sua mentalidade* (Weily Toro Machado) — 8 perguntas da
-seção 1.1 e 1 pergunta bônus sobre mentalidade de abundância x escassez
-(seções 1.1/1.2). Tema visual: branco e dourado.
+seção 1.1, 1 pergunta bônus sobre mentalidade de abundância x escassez
+(seções 1.1/1.2) e 1 pergunta de concordância (escala de 1 a 5) sobre a
+frase-título do livro. Tema visual: branco e dourado.
 
 ## Estrutura
 
