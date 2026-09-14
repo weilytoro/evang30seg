@@ -42,12 +42,11 @@ body {
 .app { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; padding: 48px 20px 80px; }
 
 header { text-align: center; margin-bottom: 40px; }
-.cross {
+.mind-icon {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 48px; height: 48px; margin-bottom: 20px;
-  background: linear-gradient(135deg, var(--gold), var(--gold3));
-  border-radius: 14px; font-size: 24px; color: #fff;
+  width: 64px; height: 64px; margin-bottom: 20px;
   box-shadow: 0 0 40px rgba(138,101,31,0.25);
+  border-radius: 50%;
 }
 .header-title {
   font-family: var(--fh); font-size: clamp(26px, 7vw, 38px);
@@ -117,7 +116,54 @@ input:focus { border-color: rgba(138,101,31,0.5); }
 <div class="app">
 
   <header>
-    <div class="cross">✝</div>
+    <div class="mind-icon" aria-hidden="true">
+      <svg viewBox="0 0 64 64" width="64" height="64">
+        <defs>
+          <radialGradient id="mindBg" cx="35%" cy="30%" r="75%">
+            <stop offset="0" stop-color="var(--gold2)"/>
+            <stop offset="1" stop-color="var(--gold3)"/>
+          </radialGradient>
+        </defs>
+        <circle cx="32" cy="32" r="32" fill="url(#mindBg)"/>
+        <g stroke="rgba(255,255,255,0.55)" stroke-width="1">
+          <line x1="14" y1="16" x2="21" y2="23"/>
+          <line x1="50" y1="16" x2="43" y2="23"/>
+          <line x1="10" y1="34" x2="18" y2="33"/>
+          <line x1="54" y1="34" x2="46" y2="33"/>
+          <line x1="20" y1="50" x2="24" y2="42"/>
+          <line x1="44" y1="50" x2="40" y2="42"/>
+        </g>
+        <g fill="#fff" opacity="0.85">
+          <circle cx="14" cy="16" r="2"/>
+          <circle cx="50" cy="16" r="2"/>
+          <circle cx="10" cy="34" r="2"/>
+          <circle cx="54" cy="34" r="2"/>
+          <circle cx="20" cy="50" r="2"/>
+          <circle cx="44" cy="50" r="2"/>
+        </g>
+        <path fill="#fff" fill-opacity="0.95" d="
+          M32,17
+          C27,17 23,19.5 22,23
+          C17.5,23 14,26.5 14,31
+          C14,33.5 15,35.5 16.5,37
+          C15.5,38.5 15,40 15,42
+          C15,46.5 19,50 24,50
+          C25.5,50 27,49.5 28,48.7
+          C29.2,49.8 30.9,50.5 32,50.5
+          C33.1,50.5 34.8,49.8 36,48.7
+          C37,49.5 38.5,50 40,50
+          C45,50 49,46.5 49,42
+          C49,40 48.5,38.5 47.5,37
+          C49,35.5 50,33.5 50,31
+          C50,26.5 46.5,23 42,23
+          C41,19.5 37,17 32,17 Z"/>
+        <path d="M32,20 C31,26 31,32 32,38 C33,42 32.5,46 31.5,49"
+          fill="none" stroke="var(--gold3)" stroke-width="1.3" stroke-linecap="round" opacity="0.5"/>
+        <path d="M24,25 C22,28 22,32 25,35 M40,25 C42,28 42,32 39,35"
+          fill="none" stroke="var(--gold3)" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+        <text x="32" y="38" text-anchor="middle" font-family="var(--fh)" font-size="15" font-weight="900" fill="var(--gold3)">$</text>
+      </svg>
+    </div>
     <h1 class="header-title">Qual o seu nível de<br>mentalidade financeira?</h1>
     <p class="header-sub">Responda com sinceridade e descubra onde você está</p>
   </header>
