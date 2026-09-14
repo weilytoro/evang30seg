@@ -63,6 +63,7 @@ const loginPasswordInput = document.getElementById('login-password');
 const passwordConfirmField = document.getElementById('password-confirm-field');
 const loginPasswordConfirmInput = document.getElementById('login-password-confirm');
 const forgotPasswordWrap = document.getElementById('forgot-password-wrap');
+const termsNote = document.getElementById('terms-note');
 const forgotPasswordLink = document.getElementById('forgot-password-link');
 const authMessage = document.getElementById('auth-message');
 const authSubmitBtn = document.getElementById('auth-submit-btn');
@@ -170,6 +171,7 @@ function setAuthMode(mode) {
   loginPasswordConfirmInput.required = false;
 
   forgotPasswordWrap.classList.add('hide');
+  termsNote.classList.add('hide');
 
   if (mode === 'register') {
     modalTitle.textContent = 'Criar conta';
@@ -179,6 +181,7 @@ function setAuthMode(mode) {
     authSubmitBtn.textContent = 'Cadastrar';
     toggleAuthModeBtn.textContent = 'Já tem conta? Entrar';
     toggleAuthModeBtn.classList.remove('hide');
+    termsNote.classList.remove('hide');
   } else if (mode === 'forgot') {
     modalTitle.textContent = 'Esqueci minha senha';
     modalSub.textContent = 'Informe seu e-mail e enviaremos um link para redefinir sua senha.';

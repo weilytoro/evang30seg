@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dinheiro chama dinheiro?</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -975,6 +980,10 @@
 
   #footer-tagline-wrap { display: flex; align-items: center; gap: 0.6rem; }
 
+  .footer-legal { display: flex; gap: 1.2rem; }
+  .footer-legal a { color: var(--muted); text-decoration: none; font-size: 0.82rem; }
+  .footer-legal a:hover { color: var(--gold-deep); text-decoration: underline; }
+
   #footer-form {
     width: 100%;
     display: flex;
@@ -1379,6 +1388,10 @@
     <span id="footer-tagline">Educação que transforma</span>
     <button id="footer-edit-trigger" class="edit-btn hide">Editar</button>
   </span>
+  <nav class="footer-legal">
+    <a href="/privacidade.html">Política de Privacidade</a>
+    <a href="/termos.html">Termos de Uso</a>
+  </nav>
   <form id="footer-form" class="hide">
     <div class="field">
       <label for="footer-tagline-input">Frase do rodapé</label>
@@ -1411,6 +1424,7 @@
         <input type="password" id="login-password-confirm" minlength="6" placeholder="••••••••">
       </div>
       <p class="note hide" id="forgot-password-wrap"><a href="#" id="forgot-password-link">Esqueci minha senha</a></p>
+      <p class="note hide" id="terms-note" style="font-size:0.78rem; color:var(--muted);">Ao criar sua conta, você concorda com os <a href="/termos.html" target="_blank">Termos de Uso</a> e a <a href="/privacidade.html" target="_blank">Política de Privacidade</a>.</p>
       <p class="note" id="auth-message" style="display:none;"></p>
       <button type="submit" id="auth-submit-btn">Entrar</button>
       <button type="button" id="toggle-auth-mode" style="background:none; border:none; color:var(--gold-deep); font-size:0.85rem; font-weight:600; cursor:pointer; justify-self:center;">Não tem conta? Criar conta</button>
