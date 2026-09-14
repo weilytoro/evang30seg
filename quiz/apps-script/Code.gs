@@ -47,6 +47,42 @@ function doPost(e) {
   }
 }
 
+// GET /exec?callback=fn devolve, via JSONP, a contagem de respostas por
+// nível (sem nome/e-mail/telefone/respostas) — usado pelo dashboard.html.
+function doGet(e) {
+  const counts = getNivelCounts();
+  const callback = e && e.parameter && e.parameter.callback;
+  if (callback && /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(callback)) {
+    return ContentService
+      .createTextOutput(callback + '(' + JSON.stringify(counts) + ')')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+  return jsonResponse({ ok: true, counts });
+}
+
+function getNivelCounts() {
+  const counts = { nivel1: 0, nivel2: 0, nivel3: 0, nivel4: 0, nivel5: 0 };
+  const TITULO_PARA_NIVEL = {
+    'Mentalidade Financeira Bloqueada': 'nivel1',
+    'Mentalidade Financeira Estagnada': 'nivel2',
+    'Mentalidade Financeira em Transição': 'nivel3',
+    'Mentalidade Financeira em Construção': 'nivel4',
+    'Mentalidade Financeira Evoluída': 'nivel5',
+  };
+
+  const sheet = getSheet();
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return counts;
+
+  const perfilColuna = HEADER.indexOf('Perfil') + 1;
+  const perfis = sheet.getRange(2, perfilColuna, lastRow - 1, 1).getValues();
+  perfis.forEach(function (row) {
+    const nivel = TITULO_PARA_NIVEL[String(row[0] || '').trim()];
+    if (nivel) counts[nivel]++;
+  });
+  return counts;
+}
+
 function getSheet() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getSheetByName(SHEET_NAME);
@@ -56,6 +92,14 @@ function getSheet() {
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(HEADER);
     sheet.getRange(1, 1, 1, HEADER.length).setFontWeight('bold');
+  } else {
+    const headerRange = sheet.getRange(1, 1, 1, HEADER.length);
+    const atual = headerRange.getValues()[0];
+    const bate = HEADER.every(function (col, i) { return atual[i] === col; });
+    if (!bate) {
+      headerRange.setValues([HEADER]);
+      headerRange.setFontWeight('bold');
+    }
   }
   return sheet;
 }

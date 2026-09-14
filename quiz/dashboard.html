@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Painel — Mentalidade Financeira</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #f3ebd8;
+  --s1: #ffffff;
+  --s2: #f5efe0;
+  --bd: rgba(138,101,31,0.16);
+  --bd2: rgba(138,101,31,0.32);
+  --gold: #b1852c;
+  --gold2: #d9ad55;
+  --gold3: #8a651f;
+  --ink: #2b2417;
+  --muted: #7d7259;
+  --r: 12px;
+  --fh: 'Playfair Display', serif;
+  --fb: 'Inter', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--fb);
+  min-height: 100vh;
+}
+
+.app { max-width: 640px; margin: 0 auto; padding: 48px 20px 80px; }
+
+header { text-align: center; margin-bottom: 36px; }
+.header-title {
+  font-family: var(--fh); font-size: clamp(24px, 6vw, 34px);
+  font-weight: 900; letter-spacing: -0.5px; line-height: 1.1;
+  color: var(--ink); margin-bottom: 8px;
+}
+.header-sub { font-size: 13px; color: var(--muted); letter-spacing: 0.03em; }
+
+.card {
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: var(--r);
+  padding: 32px 24px;
+  box-shadow: 0 8px 30px rgba(138,101,31,0.08);
+}
+
+.state { text-align: center; padding: 40px 10px; color: var(--muted); font-size: 14px; display: none; }
+.state.on { display: block; }
+
+.chart-wrap { display: none; }
+.chart-wrap.on { display: block; }
+
+.chart-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 32px; flex-wrap: wrap; margin-bottom: 24px;
+}
+
+svg.pie { flex: 0 0 auto; }
+
+.total-label {
+  font-family: var(--fh); font-size: 34px; font-weight: 900; fill: var(--ink);
+}
+.total-sub { font-size: 11px; fill: var(--muted); }
+
+.legend { display: flex; flex-direction: column; gap: 10px; }
+.legend-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; padding: 8px 12px;
+  background: var(--s2); border-radius: 8px; border: 1px solid var(--bd);
+}
+.legend-swatch { width: 12px; height: 12px; border-radius: 3px; flex: 0 0 auto; }
+.legend-text { flex: 1; }
+.legend-name { font-weight: 600; color: var(--ink); }
+.legend-count { color: var(--muted); font-size: 12px; }
+.legend-pct { font-weight: 700; color: var(--gold3); font-variant-numeric: tabular-nums; }
+
+.refresh-row { text-align: center; margin-top: 24px; }
+button#btn-refresh {
+  background: linear-gradient(135deg, var(--gold), var(--gold3));
+  color: #fff; border: none; padding: 10px 22px; border-radius: 999px;
+  font-family: var(--fb); font-size: 13px; font-weight: 600; cursor: pointer;
+}
+button#btn-refresh:active { opacity: 0.85; }
+.updated-at { margin-top: 10px; font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="header-title">Painel de Resultados</div>
+    <div class="header-sub">Distribuição dos níveis de mentalidade financeira entre quem respondeu o quiz</div>
+  </header>
+
+  <div class="card">
+    <div id="state-loading" class="state on">Carregando dados da planilha…</div>
+    <div id="state-empty" class="state">Ainda não há respostas registradas na planilha.</div>
+    <div id="state-error" class="state">Não foi possível carregar os dados agora. Verifique a URL do Apps Script em <code>SAVE_URL</code> e tente de novo.</div>
+
+    <div id="chart-wrap" class="chart-wrap">
+      <div class="chart-row">
+        <svg id="pie" class="pie" width="220" height="220" viewBox="0 0 220 220"></svg>
+        <div id="legend" class="legend"></div>
+      </div>
+    </div>
+
+    <div class="refresh-row">
+      <button id="btn-refresh" type="button">Atualizar</button>
+      <div id="updated-at" class="updated-at"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Mesma URL do Apps Script usada pelo quiz (index.html) — troque aqui se mudar.
+const SAVE_URL = 'https://script.google.com/macros/s/AKfycbyUCVeiJNqI4437sITH0AOcG-85ExJvXWWpU63NsV2vWvj1A4LWeUE0OiZkLylFxtyoVA/exec';
+
+const NIVEIS = [
+  { key: 'nivel1', nome: 'Bloqueada',    cor: '#e8c9a0' },
+  { key: 'nivel2', nome: 'Estagnada',    cor: '#d9ad55' },
+  { key: 'nivel3', nome: 'Em Transição', cor: '#c2933c' },
+  { key: 'nivel4', nome: 'Em Construção', cor: '#a97a28' },
+  { key: 'nivel5', nome: 'Evoluída',     cor: '#7c5518' },
+];
+
+function setState(name) {
+  ['loading', 'empty', 'error'].forEach(s => {
+    document.getElementById('state-' + s).classList.toggle('on', s === name);
+  });
+  document.getElementById('chart-wrap').classList.toggle('on', name === 'ok');
+}
+
+function polarToCartesian(cx, cy, r, angleDeg) {
+  const a = (angleDeg - 90) * Math.PI / 180;
+  return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+}
+
+function arcPath(cx, cy, r, startAngle, endAngle) {
+  const start = polarToCartesian(cx, cy, r, endAngle);
+  const end = polarToCartesian(cx, cy, r, startAngle);
+  const largeArc = endAngle - startAngle > 180 ? 1 : 0;
+  return `M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 0 ${end.x} ${end.y} Z`;
+}
+
+function render(counts) {
+  const total = NIVEIS.reduce((s, n) => s + (counts[n.key] || 0), 0);
+  if (!total) { setState('empty'); return; }
+
+  const svg = document.getElementById('pie');
+  svg.innerHTML = '';
+  const cx = 110, cy = 110, r = 100;
+  let angle = 0;
+
+  NIVEIS.forEach(n => {
+    const val = counts[n.key] || 0;
+    if (!val) return;
+    const slice = (val / total) * 360;
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', arcPath(cx, cy, r, angle, angle + slice));
+    path.setAttribute('fill', n.cor);
+    path.setAttribute('stroke', '#ffffff');
+    path.setAttribute('stroke-width', '2');
+    svg.appendChild(path);
+    angle += slice;
+  });
+
+  const hole = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  hole.setAttribute('cx', cx); hole.setAttribute('cy', cy); hole.setAttribute('r', 58);
+  hole.setAttribute('fill', '#ffffff');
+  svg.appendChild(hole);
+
+  const totalText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  totalText.setAttribute('x', cx); totalText.setAttribute('y', cy - 2);
+  totalText.setAttribute('text-anchor', 'middle');
+  totalText.setAttribute('class', 'total-label');
+  totalText.textContent = total;
+  svg.appendChild(totalText);
+
+  const subText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  subText.setAttribute('x', cx); subText.setAttribute('y', cy + 18);
+  subText.setAttribute('text-anchor', 'middle');
+  subText.setAttribute('class', 'total-sub');
+  subText.textContent = total === 1 ? 'resposta' : 'respostas';
+  svg.appendChild(subText);
+
+  const legend = document.getElementById('legend');
+  legend.innerHTML = '';
+  NIVEIS.forEach(n => {
+    const val = counts[n.key] || 0;
+    const pct = total ? Math.round((val / total) * 100) : 0;
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `
+      <span class="legend-swatch" style="background:${n.cor}"></span>
+      <span class="legend-text">
+        <div class="legend-name">${n.nome}</div>
+        <div class="legend-count">${val} ${val === 1 ? 'resposta' : 'respostas'}</div>
+      </span>
+      <span class="legend-pct">${pct}%</span>
+    `;
+    legend.appendChild(item);
+  });
+
+  setState('ok');
+  document.getElementById('updated-at').textContent =
+    'Atualizado às ' + new Date().toLocaleTimeString('pt-BR');
+}
+
+function loadData() {
+  setState('loading');
+  const cbName = 'onDashboardData_' + Date.now();
+  const timeout = setTimeout(() => {
+    if (window[cbName]) { delete window[cbName]; setState('error'); }
+  }, 10000);
+
+  window[cbName] = function (counts) {
+    clearTimeout(timeout);
+    delete window[cbName];
+    script.remove();
+    render(counts);
+  };
+
+  const script = document.createElement('script');
+  script.src = SAVE_URL + (SAVE_URL.includes('?') ? '&' : '?') + 'callback=' + cbName;
+  script.onerror = function () {
+    clearTimeout(timeout);
+    delete window[cbName];
+    setState('error');
+  };
+  document.body.appendChild(script);
+}
+
+document.getElementById('btn-refresh').addEventListener('click', loadData);
+loadData();
+</script>
+</body>
+</html>

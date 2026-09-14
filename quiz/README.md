@@ -15,7 +15,8 @@ seção 1.1 e 1 pergunta bônus sobre mentalidade de abundância x escassez
 ```
 quiz/
   index.html              → o quiz (frontend, sem build step)
-  apps-script/Code.gs      → Web App que grava cada resposta na planilha
+  dashboard.html           → gráfico de setores com a distribuição dos níveis
+  apps-script/Code.gs      → Web App que grava e lê os dados da planilha
 ```
 
 ## Configurar a planilha (uma vez)
@@ -43,6 +44,25 @@ mais nova deste repositório), é preciso ir em **Implantar → Gerenciar
 implantações → editar (ícone de lápis) → Nova versão** para as mudanças
 valerem na URL já publicada — só colar o código novo e salvar não é
 suficiente.
+
+## Painel com o gráfico de setores
+
+`quiz/dashboard.html` mostra um gráfico de setores com a quantidade de
+pessoas em cada um dos 5 níveis de mentalidade financeira. Ele busca os
+dados direto do mesmo `SAVE_URL` do Apps Script (só a contagem por nível —
+nunca nome, e-mail, telefone ou respostas individuais), então:
+
+1. Garanta que `Code.gs` na planilha está na versão mais recente (com as
+   funções `doGet`/`getNivelCounts`) e que você **reimplantou uma nova
+   versão** depois de colar o código.
+2. Em `quiz/dashboard.html`, o `SAVE_URL` já é copiado automaticamente do
+   `index.html` — troque os dois juntos se um dia mudar de planilha.
+3. Publique/suba o `quiz/dashboard.html` junto com o resto do site; acesse
+   pelo caminho `/quiz/dashboard.html`.
+
+Como a planilha tinha linhas de teste gravadas antes das colunas de
+e-mail/telefone existirem, é recomendável apagá-las (ou movê-las para outra
+aba) para não distorcer a contagem do painel.
 
 ## Editar perguntas ou resultados
 
