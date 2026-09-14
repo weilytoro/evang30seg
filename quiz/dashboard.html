@@ -88,6 +88,7 @@ button#btn-refresh {
 }
 button#btn-refresh:active { opacity: 0.85; }
 .updated-at { margin-top: 10px; font-size: 11px; color: var(--muted); }
+.auto-note { margin-top: 4px; font-size: 10px; color: var(--muted); opacity: 0.75; }
 </style>
 </head>
 <body>
@@ -110,8 +111,9 @@ button#btn-refresh:active { opacity: 0.85; }
     </div>
 
     <div class="refresh-row">
-      <button id="btn-refresh" type="button">Atualizar</button>
+      <button id="btn-refresh" type="button">Atualizar agora</button>
       <div id="updated-at" class="updated-at"></div>
+      <div class="auto-note">Atualiza sozinho a cada 30 segundos</div>
     </div>
   </div>
 </div>
@@ -221,8 +223,10 @@ function render(counts) {
     'Atualizado às ' + new Date().toLocaleTimeString('pt-BR');
 }
 
-async function loadData() {
-  setState('loading');
+async function loadData(silent) {
+  // Nas atualizações automáticas em segundo plano, não esconde o gráfico
+  // já exibido atrás da tela de "carregando" — só na primeira vez.
+  if (!silent) setState('loading');
   try {
     const res = await fetch(SAVE_URL);
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -234,8 +238,11 @@ async function loadData() {
   }
 }
 
-document.getElementById('btn-refresh').addEventListener('click', loadData);
-loadData();
+const AUTO_REFRESH_MS = 30000;
+
+document.getElementById('btn-refresh').addEventListener('click', () => loadData(false));
+loadData(false);
+setInterval(() => loadData(true), AUTO_REFRESH_MS);
 </script>
 </body>
 </html>
