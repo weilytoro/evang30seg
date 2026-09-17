@@ -115,6 +115,7 @@ ensureColumn('site_settings', 'hero_title_prefix', 'TEXT');
 ensureColumn('site_settings', 'hero_title_highlight', 'TEXT');
 ensureColumn('site_settings', 'hero_subtitle', 'TEXT');
 ensureColumn('site_settings', 'footer_tagline', 'TEXT');
+ensureColumn('posts', 'content', 'TEXT');
 
 db.prepare(
   `INSERT OR IGNORE INTO site_settings (id, about_text, contact_instagram, contact_email, contact_phone)

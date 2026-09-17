@@ -47,6 +47,7 @@ Todas as rotas ficam sob `/api`. Corpo e respostas em JSON.
 | POST | `/api/auth/forgot-password` | público | Envia (ou loga) o link de redefinição de senha (`email`) |
 | POST | `/api/auth/reset-password` | público | Define nova senha a partir do token do link (`token`, `password`) |
 | GET | `/api/posts` | público | Lista publicações |
+| GET | `/api/posts/:id` | público | Detalhe de uma publicação (com conteúdo completo) |
 | POST | `/api/posts` | admin | Cria publicação |
 | GET | `/api/products` | público | Lista produtos da loja |
 | POST | `/api/products` | admin | Cria produto |

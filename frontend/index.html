@@ -958,6 +958,21 @@
     justify-self: center;
   }
 
+  .modal.modal-wide {
+    max-width: 640px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .post-view-meta { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem; }
+
+  .post-view-body {
+    white-space: pre-wrap;
+    line-height: 1.7;
+    color: #3a3833;
+    margin-top: 1rem;
+  }
+
   .modal .note {
     font-size: 0.78rem;
     color: var(--muted);
@@ -1375,6 +1390,11 @@
         <textarea id="excerpt" required placeholder="Um resumo curto que aparece na listagem de publicações"></textarea>
       </div>
 
+      <div class="field">
+        <label for="content">Conteúdo</label>
+        <textarea id="content" required placeholder="O texto completo da publicação" rows="8"></textarea>
+      </div>
+
       <button type="submit">Publicar</button>
       <div class="confirm" id="confirm-msg">Publicação adicionada com sucesso.</div>
     </form>
@@ -1430,6 +1450,16 @@
       <button type="button" id="toggle-auth-mode" style="background:none; border:none; color:var(--gold-deep); font-size:0.85rem; font-weight:600; cursor:pointer; justify-self:center;">Não tem conta? Criar conta</button>
       <button type="button" class="close-modal" id="close-modal">Cancelar</button>
     </form>
+  </div>
+</div>
+
+<!-- Post view modal -->
+<div class="overlay" id="post-overlay">
+  <div class="modal modal-wide">
+    <div class="post-view-meta" id="post-view-meta"></div>
+    <h3 id="post-view-title"></h3>
+    <div class="post-view-body" id="post-view-body"></div>
+    <button type="button" class="close-modal" id="close-post-modal">Fechar</button>
   </div>
 </div>
 

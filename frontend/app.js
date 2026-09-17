@@ -75,6 +75,12 @@ const publishLoginLink = document.getElementById('publish-login-link');
 const postsList = document.getElementById('posts-list');
 const confirmMsg = document.getElementById('confirm-msg');
 
+const postOverlay = document.getElementById('post-overlay');
+const postViewMeta = document.getElementById('post-view-meta');
+const postViewTitle = document.getElementById('post-view-title');
+const postViewBody = document.getElementById('post-view-body');
+const closePostModal = document.getElementById('close-post-modal');
+
 const addProductTrigger = document.getElementById('add-product-trigger');
 const shopLockedNote = document.getElementById('shop-locked-note');
 const productForm = document.getElementById('product-form');
@@ -404,7 +410,10 @@ async function restoreSession() {
 }
 
 // Publicações
+let loadedPosts = [];
+
 function renderPosts(posts) {
+  loadedPosts = posts;
   postsList.innerHTML = '';
   if (!posts.length) {
     const p = document.createElement('p');
@@ -420,13 +429,38 @@ function renderPosts(posts) {
     article.innerHTML =
       '<div class="date">' + formatDateLabel(post.created_at) + '</div>' +
       '<div>' +
-        '<h3><a href="#">' + escapeHtml(post.title) + '</a></h3>' +
+        '<h3><a href="#" class="post-title-link" data-id="' + post.id + '">' + escapeHtml(post.title) + '</a></h3>' +
         '<p class="excerpt">' + escapeHtml(post.excerpt) + '</p>' +
       '</div>' +
       '<div class="cat">' + escapeHtml(post.category) + '</div>';
     postsList.appendChild(article);
   });
 }
+
+function openPostView(post) {
+  const author = post.author_name ? ' · ' + post.author_name : '';
+  postViewMeta.textContent = formatDateLabel(post.created_at) + author + ' · ' + post.category;
+  postViewTitle.textContent = post.title;
+  postViewBody.textContent = post.content || post.excerpt;
+  postOverlay.classList.add('show');
+}
+
+function closePostView() {
+  postOverlay.classList.remove('show');
+}
+
+postsList.addEventListener('click', function (e) {
+  const link = e.target.closest('.post-title-link');
+  if (!link) return;
+  e.preventDefault();
+  const post = loadedPosts.find(function (p) { return String(p.id) === link.dataset.id; });
+  if (post) openPostView(post);
+});
+
+closePostModal.addEventListener('click', closePostView);
+postOverlay.addEventListener('click', function (e) {
+  if (e.target === postOverlay) closePostView();
+});
 
 async function loadPosts() {
   const data = await api('/posts');
@@ -440,10 +474,11 @@ publishForm.addEventListener('submit', async function (e) {
   const title = document.getElementById('title').value.trim();
   const category = document.getElementById('category').value;
   const excerpt = document.getElementById('excerpt').value.trim();
-  if (!title || !excerpt) return;
+  const content = document.getElementById('content').value.trim();
+  if (!title || !excerpt || !content) return;
 
   try {
-    await api('/posts', { method: 'POST', body: JSON.stringify({ title: title, category: category, excerpt: excerpt }) });
+    await api('/posts', { method: 'POST', body: JSON.stringify({ title: title, category: category, excerpt: excerpt, content: content }) });
     await loadPosts();
     publishForm.reset();
     confirmMsg.classList.add('show');
