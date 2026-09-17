@@ -11,6 +11,8 @@ backend/    API REST em Node.js + Express + SQLite
 
 O backend serve o conteúdo de `frontend/` diretamente, então em desenvolvimento normal basta rodar o backend.
 
+Para o comportamento detalhado do sistema (schema do banco, contrato completo da API, regras de autenticação, comportamento do frontend), veja [`SPEC.md`](./SPEC.md) — mantenha-o atualizado ao mudar código.
+
 ## Como rodar
 
 ```bash
