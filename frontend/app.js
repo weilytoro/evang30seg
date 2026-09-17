@@ -82,7 +82,6 @@ const toggleAuthModeBtn = document.getElementById('toggle-auth-mode');
 
 const publishLocked = document.getElementById('publish-locked');
 const publishForm = document.getElementById('publish-form');
-const publishLoginLink = document.getElementById('publish-login-link');
 const postsList = document.getElementById('posts-list');
 const confirmMsg = document.getElementById('confirm-msg');
 
@@ -95,19 +94,16 @@ const closePostModal = document.getElementById('close-post-modal');
 const addProductTrigger = document.getElementById('add-product-trigger');
 const shopLockedNote = document.getElementById('shop-locked-note');
 const productForm = document.getElementById('product-form');
-const shopLoginLink = document.getElementById('shop-login-link');
 const shopGrid = document.getElementById('shop-grid');
 
 const addMediaTrigger = document.getElementById('add-media-trigger');
 const mediaLockedNote = document.getElementById('media-locked-note');
 const mediaForm = document.getElementById('media-form');
-const mediaLoginLink = document.getElementById('media-login-link');
 const mediaGrid = document.getElementById('media-grid');
 
 const addEventTrigger = document.getElementById('add-event-trigger');
 const eventsLockedNote = document.getElementById('events-locked-note');
 const eventForm = document.getElementById('event-form');
-const eventsLoginLink = document.getElementById('events-login-link');
 const eventsGrid = document.getElementById('events-grid');
 
 const aboutEditTrigger = document.getElementById('about-edit-trigger');
@@ -311,10 +307,6 @@ function updateAccessUI() {
 
 loginTrigger.addEventListener('click', openLogin);
 closeModal.addEventListener('click', closeLogin);
-publishLoginLink.addEventListener('click', openLogin);
-shopLoginLink.addEventListener('click', openLogin);
-mediaLoginLink.addEventListener('click', openLogin);
-eventsLoginLink.addEventListener('click', openLogin);
 
 loginOverlay.addEventListener('click', function (e) {
   if (e.target === loginOverlay) closeLogin();
