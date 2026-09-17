@@ -8,6 +8,17 @@ let resetToken = null;
 
 const MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 
+const toastEl = document.getElementById('toast');
+let toastTimer = null;
+
+function showToast(message, isError) {
+  toastEl.textContent = message;
+  toastEl.classList.toggle('error', !!isError);
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 4000);
+}
+
 function formatDateLabel(value) {
   if (!value) return '';
   const iso = value.indexOf('T') === -1 ? value.replace(' ', 'T') + 'Z' : value;
@@ -236,9 +247,9 @@ resendVerificationLink.addEventListener('click', async function (e) {
   e.preventDefault();
   try {
     await api('/auth/resend-verification', { method: 'POST' });
-    alert('E-mail de verificação reenviado. Confira sua caixa de entrada.');
+    showToast('E-mail de verificação reenviado. Confira sua caixa de entrada.');
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, true);
   }
 });
 
@@ -484,7 +495,7 @@ publishForm.addEventListener('submit', async function (e) {
     confirmMsg.classList.add('show');
     setTimeout(function () { confirmMsg.classList.remove('show'); }, 3000);
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, true);
   }
 });
 
@@ -537,7 +548,7 @@ productForm.addEventListener('submit', async function (e) {
     productForm.reset();
     productForm.classList.add('hide');
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, true);
   }
 });
 
@@ -589,7 +600,7 @@ mediaForm.addEventListener('submit', async function (e) {
     mediaForm.reset();
     mediaForm.classList.add('hide');
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, true);
   }
 });
 
@@ -643,13 +654,13 @@ eventForm.addEventListener('submit', async function (e) {
     eventForm.reset();
     eventForm.classList.add('hide');
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, true);
   }
 });
 
 // Sobre nós (admin)
 function renderSiteAbout(about) {
-  aboutText.textContent = about || 'Texto a ser definido.';
+  aboutText.textContent = about || 'Nossa história em breve.';
 }
 
 aboutEditTrigger.addEventListener('click', function () {
@@ -671,7 +682,7 @@ aboutForm.addEventListener('submit', async function (e) {
     aboutText.classList.remove('hide');
     aboutForm.classList.add('hide');
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, true);
   }
 });
 
@@ -725,7 +736,7 @@ function setupPhotoUpload(trigger, fileInput, imgEl, endpoint, responseKey, maxD
       const data = await api(endpoint, { method: 'PUT', body: JSON.stringify({ image: dataUrl }) });
       imgEl.src = data[responseKey];
     } catch (err) {
-      alert(err.message);
+      showToast(err.message, true);
     }
   });
 }
@@ -783,7 +794,7 @@ contactForm.addEventListener('submit', async function (e) {
     renderSiteContact(data.contact);
     contactForm.classList.add('hide');
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, true);
   }
 });
 
@@ -819,7 +830,7 @@ heroForm.addEventListener('submit', async function (e) {
     renderHero(data.hero);
     heroForm.classList.add('hide');
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, true);
   }
 });
 
@@ -844,7 +855,7 @@ footerForm.addEventListener('submit', async function (e) {
     renderFooterTagline(data.footerTagline);
     footerForm.classList.add('hide');
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, true);
   }
 });
 
@@ -878,7 +889,7 @@ mentorshipForm.addEventListener('submit', async function (e) {
     mentorshipConfirm.classList.add('show');
     setTimeout(function () { mentorshipConfirm.classList.remove('show'); }, 4000);
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, true);
   }
 });
 
@@ -898,7 +909,7 @@ newsletterForm.addEventListener('submit', async function (e) {
     newsletterConfirm.classList.add('show');
     setTimeout(function () { newsletterConfirm.classList.remove('show'); }, 4000);
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, true);
   }
 });
 
@@ -928,12 +939,12 @@ function clearVerifyQueryParam() {
 async function handleVerifyLink(token) {
   try {
     await api('/auth/verify-email', { method: 'POST', body: JSON.stringify({ token: token }) });
-    alert('E-mail verificado com sucesso!');
+    showToast('E-mail verificado com sucesso!');
     await restoreSession();
     updateUserBadge();
     updateAccessUI();
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, true);
   } finally {
     clearVerifyQueryParam();
   }
