@@ -30,7 +30,9 @@ function formatDateLabel(value) {
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str == null ? '' : String(str);
-  return div.innerHTML;
+  // div.innerHTML já escapa <, > e & — completa com aspas para que o
+  // resultado também seja seguro dentro de um atributo HTML entre aspas.
+  return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 async function api(path, options) {

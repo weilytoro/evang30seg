@@ -4,7 +4,14 @@ const bcrypt = require('bcryptjs');
 const db = require('../db');
 const { signToken, requireAuth } = require('../middleware/auth');
 const { sendPasswordResetEmail, sendVerificationEmail } = require('../mailer');
-const { loginLimiter, registerLimiter, forgotPasswordLimiter, tokenLimiter } = require('../middleware/rateLimit');
+const {
+  loginLimiter,
+  registerLimiter,
+  forgotPasswordLimiter,
+  verifyEmailLimiter,
+  resendVerificationLimiter,
+  resetPasswordLimiter,
+} = require('../middleware/rateLimit');
 
 const router = express.Router();
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,7 +73,7 @@ router.post('/register', registerLimiter, async (req, res) => {
 
   // O papel de administrador só é concedido após a verificação do e-mail (ver /verify-email),
   // para que ninguém vire admin apenas digitando o e-mail de outra pessoa no cadastro.
-  const passwordHash = bcrypt.hashSync(password, 10);
+  const passwordHash = await bcrypt.hash(password, 10);
   const info = db
     .prepare('INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)')
     .run(name.trim(), normalizedEmail, passwordHash, 'user');
@@ -81,7 +88,7 @@ router.post('/register', registerLimiter, async (req, res) => {
   res.status(201).json({ token, user: publicUser(user) });
 });
 
-router.post('/login', loginLimiter, (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   const { email, password } = req.body || {};
   if (!email || !password) {
     return res.status(400).json({ error: 'Informe e-mail e senha.' });
@@ -97,7 +104,7 @@ router.post('/login', loginLimiter, (req, res) => {
     });
   }
 
-  const passwordOk = user && bcrypt.compareSync(password, user.password_hash);
+  const passwordOk = user && (await bcrypt.compare(password, user.password_hash));
 
   if (!passwordOk) {
     if (user) {
@@ -137,7 +144,7 @@ router.get('/me', requireAuth, (req, res) => {
   res.json({ user: publicUser(user) });
 });
 
-router.post('/verify-email', tokenLimiter, (req, res) => {
+router.post('/verify-email', verifyEmailLimiter, (req, res) => {
   const { token } = req.body || {};
   if (!token || typeof token !== 'string') {
     return res.status(400).json({ error: 'Link de verificação inválido ou expirado.' });
@@ -158,7 +165,7 @@ router.post('/verify-email', tokenLimiter, (req, res) => {
   res.json({ ok: true, role });
 });
 
-router.post('/resend-verification', tokenLimiter, requireAuth, async (req, res) => {
+router.post('/resend-verification', resendVerificationLimiter, requireAuth, async (req, res) => {
   const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
   if (user.email_verified) {
     return res.json({ ok: true, alreadyVerified: true });
@@ -196,7 +203,7 @@ router.post('/forgot-password', forgotPasswordLimiter, async (req, res) => {
   res.json({ ok: true, message: 'Se este e-mail estiver cadastrado, enviamos instruções de redefinição.' });
 });
 
-router.post('/reset-password', tokenLimiter, (req, res) => {
+router.post('/reset-password', resetPasswordLimiter, async (req, res) => {
   const { token, password } = req.body || {};
   if (!token || typeof token !== 'string') {
     return res.status(400).json({ error: 'Link de redefinição inválido ou expirado.' });
@@ -212,7 +219,7 @@ router.post('/reset-password', tokenLimiter, (req, res) => {
     return res.status(400).json({ error: 'Link de redefinição inválido ou expirado.' });
   }
 
-  const passwordHash = bcrypt.hashSync(password, 10);
+  const passwordHash = await bcrypt.hash(password, 10);
   db.prepare(
     `UPDATE users
      SET password_hash = ?, reset_token_hash = NULL, reset_token_expires = NULL,

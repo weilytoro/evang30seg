@@ -213,10 +213,12 @@ Convenção de autorização nas tabelas abaixo:
 | POST | `/register` | público | `registerLimiter` (10/h por IP) | `{ name, email, password }` (senha ≥ 6) | `201 { token, user }` |
 | POST | `/login` | público | `loginLimiter` (20/15min por IP) | `{ email, password }` | `200 { token, user }` |
 | GET | `/me` | autenticado | — | — | `200 { user }` (reavalia promoção a admin) |
-| POST | `/verify-email` | público | `tokenLimiter` (20/15min por IP) | `{ token }` | `200 { ok: true, role }` |
-| POST | `/resend-verification` | autenticado | `tokenLimiter` | — | `200 { ok: true }` ou `{ ok: true, alreadyVerified: true }` |
+| POST | `/verify-email` | público | `verifyEmailLimiter` (20/15min por IP) | `{ token }` | `200 { ok: true, role }` |
+| POST | `/resend-verification` | autenticado | `resendVerificationLimiter` (20/15min por IP) | — | `200 { ok: true }` ou `{ ok: true, alreadyVerified: true }` |
 | POST | `/forgot-password` | público | `forgotPasswordLimiter` (5/15min por IP) | `{ email }` | `200 { ok: true, message }` (sempre, exista ou não a conta) |
-| POST | `/reset-password` | público | `tokenLimiter` | `{ token, password }` (senha ≥ 6) | `200 { ok: true }` |
+| POST | `/reset-password` | público | `resetPasswordLimiter` (20/15min por IP) | `{ token, password }` (senha ≥ 6) | `200 { ok: true }` |
+
+Cada rota de token tem seu próprio limiter (contadores por IP independentes) — antes as três compartilhavam uma única instância, então esgotar o limite verificando e-mail também bloqueava reset de senha.
 
 Objeto `user` retornado (`publicUser`): `{ id, name, email, role, emailVerified }` — nunca inclui hash de senha ou tokens.
 
@@ -243,7 +245,7 @@ Não existe rota de edição/exclusão de produto — só criação. `price` nã
 
 | Método | Rota | Auth | Corpo | Resposta |
 |---|---|---|---|---|
-| GET | `/` | público | — | `{ media: [...] }`, **`ORDER BY created_at ASC, id ASC`** (mais antigo primeiro — inconsistente com posts/products, é o comportamento real) |
+| GET | `/` | público | — | `{ media: [...] }`, `ORDER BY created_at DESC, id DESC` |
 | POST | `/` | admin | `{ title, type, link, description }` | `201 { media: item }` |
 
 `type` fora de `['Vídeo', 'Podcast']` silenciosamente cai para `'Vídeo'`. `link` é validado com `new URL()`; só `http:`/`https:` são aceitos.
@@ -293,6 +295,8 @@ Validação de imagem (`/logo`, `/about-image`): precisa casar `^data:image\/(pn
 
 Não há rota pública para o frontend consumir `GET /leads/*` hoje — essas duas rotas existem na API mas **nenhuma tela as consome** (não há painel de leads no frontend atual).
 
+`POST /mentorship` e `POST /newsletter` passam por `leadsLimiter` (ver §6.2) — sem isso, qualquer visitante podia inundar as tabelas com envios automatizados.
+
 ## 6. Segurança e infraestrutura
 
 ### 6.1 Cabeçalhos e transporte
@@ -309,7 +313,12 @@ Não há rota pública para o frontend consumir `GET /leads/*` hoje — essas du
 | `registerLimiter` | 60 min | 10 | `POST /auth/register` |
 | `loginLimiter` | 15 min | 20 | `POST /auth/login` |
 | `forgotPasswordLimiter` | 15 min | 5 | `POST /auth/forgot-password` |
-| `tokenLimiter` | 15 min | 20 | `verify-email`, `resend-verification`, `reset-password` |
+| `verifyEmailLimiter` | 15 min | 20 | `POST /auth/verify-email` |
+| `resendVerificationLimiter` | 15 min | 20 | `POST /auth/resend-verification` |
+| `resetPasswordLimiter` | 15 min | 20 | `POST /auth/reset-password` |
+| `leadsLimiter` | 60 min | 10 | `POST /leads/mentorship`, `POST /leads/newsletter` |
+
+As três rotas de token (`verify-email`, `resend-verification`, `reset-password`) usavam uma única instância de limiter compartilhada — esgotar o limite verificando um e-mail também bloqueava reset de senha e reenvio de verificação. Agora cada uma tem seu próprio contador por IP.
 
 Por ser em memória (`express-rate-limit` default), reinicia a cada deploy/restart do processo e não é compartilhado entre múltiplas instâncias — relevante se o site algum dia escalar horizontalmente.
 

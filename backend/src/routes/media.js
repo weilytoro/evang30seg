@@ -6,7 +6,7 @@ const router = express.Router();
 const ALLOWED_TYPES = ['Vídeo', 'Podcast'];
 
 router.get('/', (req, res) => {
-  const media = db.prepare('SELECT * FROM media_items ORDER BY created_at ASC, id ASC').all();
+  const media = db.prepare('SELECT * FROM media_items ORDER BY created_at DESC, id DESC').all();
   res.json({ media });
 });
 

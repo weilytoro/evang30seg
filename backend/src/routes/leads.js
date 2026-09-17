@@ -1,11 +1,12 @@
 const express = require('express');
 const db = require('../db');
 const { requireAdmin } = require('../middleware/auth');
+const { leadsLimiter } = require('../middleware/rateLimit');
 
 const router = express.Router();
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-router.post('/mentorship', (req, res) => {
+router.post('/mentorship', leadsLimiter, (req, res) => {
   const { name, contact, message } = req.body || {};
 
   if (!name || !String(name).trim() || !contact || !String(contact).trim()) {
@@ -21,7 +22,7 @@ router.post('/mentorship', (req, res) => {
   res.status(201).json({ ok: true });
 });
 
-router.post('/newsletter', (req, res) => {
+router.post('/newsletter', leadsLimiter, (req, res) => {
   const { email } = req.body || {};
   if (!email || !EMAIL_RE.test(String(email))) {
     return res.status(400).json({ error: 'Informe um e-mail válido.' });
