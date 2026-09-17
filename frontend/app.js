@@ -721,6 +721,7 @@ function renderSiteContact(contact) {
 
   if (contact.phone) {
     contactPhone.textContent = contact.phone;
+    contactPhone.href = 'tel:' + contact.phone.replace(/[^\d+]/g, '');
     contactItemPhone.classList.remove('hide');
   } else {
     contactItemPhone.classList.add('hide');
