@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "test": "tsx --test tests/regras.test.ts"
+    "test": "tsx --test tests/regras.test.ts",
+    "test:e2e": "tsx --test tests/e2e/ui.test.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -30,6 +31,7 @@
     "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.28.2",
+    "playwright-core": "^1.64.0",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",
     "typescript": "^7.0.2",
