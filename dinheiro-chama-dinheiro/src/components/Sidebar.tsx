@@ -59,7 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const brand = getBrand(platformMode);
 
   const [isToolsExpanded, setIsToolsExpanded] = useState<boolean>(false);
-  const [showLockedModal, setShowLockedModal] = useState<boolean>(false);
+  const [lockedNotice, setLockedNotice] = useState<'module' | 'trilha2' | null>(null);
 
   const urgentCount = (announcements || []).filter((a) => a.isUrgent).length;
 
@@ -81,7 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const handleModuleClick = (moduleId: number, tab: string) => {
     if (!isAdmin && !isModuleUnlocked(moduleId)) {
-      setShowLockedModal(true);
+      setLockedNotice('module');
       return;
     }
     handleTabClick(tab);
@@ -89,7 +89,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const handleTrilha2Click = () => {
     if (!isAdmin && !trilha1Completed) {
-      setShowLockedModal(true);
+      setLockedNotice('trilha2');
     } else {
       handleTabClick('business');
     }
@@ -485,8 +485,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </aside>
 
-      {/* Modal Aviso Trilha 2 Bloqueada */}
-      {showLockedModal && (
+      {/* Modal de aviso: módulo bloqueado da Trilha 1 ou Trilha 2 bloqueada */}
+      {lockedNotice && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-150">
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 border border-slate-100 shadow-xl">
             <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200/60 shadow-xs">
@@ -494,27 +494,40 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-base font-black text-slate-900">
-                Interior Antes de Exterior
-              </h3>
-              <p className="text-xs text-slate-600 italic leading-relaxed">
-                &ldquo;Não se constrói um CNPJ próspero sobre um CPF desordenado.&rdquo;
-              </p>
-              <p className="text-xs text-slate-500">
-                A Trilha 2 (Empreendedorismo) só é liberada após a conclusão integral dos 7 módulos
-                da Trilha 1. Seu progresso atual é de <strong>{trilha1Progress}%</strong>.
-              </p>
+              {lockedNotice === 'trilha2' ? (
+                <>
+                  <h3 className="text-base font-black text-slate-900">
+                    Interior Antes de Exterior
+                  </h3>
+                  <p className="text-xs text-slate-600 italic leading-relaxed">
+                    &ldquo;Não se constrói um CNPJ próspero sobre um CPF desordenado.&rdquo;
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    A Trilha 2 (Empreendedorismo) só é liberada após a conclusão integral dos 7 módulos
+                    da Trilha 1. Seu progresso atual é de <strong>{trilha1Progress}%</strong>.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h3 className="text-base font-black text-slate-900">Módulo bloqueado</h3>
+                  <p className="text-xs text-slate-500">
+                    Os módulos da Trilha 1 são liberados em sequência. Comece pelo diagnóstico
+                    (Módulo 0) para destravar os demais. Seu progresso atual é de{' '}
+                    <strong>{trilha1Progress}%</strong>.
+                  </p>
+                </>
+              )}
             </div>
 
             <button
               type="button"
               onClick={() => {
-                setShowLockedModal(false);
+                setLockedNotice(null);
                 handleTabClick('quiz');
               }}
               className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-colors cursor-pointer"
             >
-              Continuar Trilha 1
+              {lockedNotice === 'trilha2' ? 'Continuar Trilha 1' : 'Ir para o Diagnóstico'}
             </button>
           </div>
         </div>

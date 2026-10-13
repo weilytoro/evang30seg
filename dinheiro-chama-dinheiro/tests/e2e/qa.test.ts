@@ -161,8 +161,9 @@ describe('diagnóstico M0 completo', () => {
     await page.getByRole('button', { name: 'M1 · Mentalidade', exact: false }).first().click({ timeout: 3000 });
     await page.waitForTimeout(400);
     assert.equal(await page.locator('header').first().innerText(), headerBefore, 'M1 não deve abrir antes do diagnóstico');
-    const lockedNotice = page.getByRole('button', { name: 'Continuar Trilha 1', exact: false });
+    const lockedNotice = page.getByRole('button', { name: 'Ir para o Diagnóstico', exact: false });
     assert.equal(await lockedNotice.isVisible(), true, 'aviso de bloqueio deve aparecer ao clicar em módulo bloqueado');
+    assert.equal(await page.getByRole('heading', { name: 'Módulo bloqueado' }).isVisible(), true, 'aviso de módulo deve ter o título de módulo');
     await lockedNotice.click();
     await page.waitForTimeout(400);
 
@@ -194,6 +195,33 @@ describe('diagnóstico M0 completo', () => {
     assert.match(await page.locator('header').first().innerText(), /MÓDULO 1/, 'M1 deve abrir após concluir o M0');
 
     assert.equal(pageErrors.length, 0, pageErrors.join('\n'));
+    await closeContext();
+  });
+});
+
+describe('regressões de UI corrigidas no QA', () => {
+  test('Escape fecha o modal Nova Conta', async () => {
+    await openTool('Contas & Cartões');
+    await page.getByRole('button', { name: 'Nova Conta', exact: false }).first().click();
+    await page.waitForTimeout(400);
+    const nameInput = page.getByPlaceholder('Ex: Nubank Principal');
+    assert.equal(await nameInput.isVisible(), true, 'pré-condição: modal aberto');
+
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+    assert.equal(await nameInput.isVisible(), false, 'Escape deve fechar o modal');
+    await closeContext();
+  });
+
+  test('telas financeiras não têm rolagem horizontal em 1280px', async () => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.getByText('FERRAMENTAS DE GESTÃO', { exact: false }).first().click();
+    for (const name of ['Lançamentos & Extrato', 'Contas & Cartões', 'Orçamentos & Metas', 'Relatórios Mensais']) {
+      await page.getByRole('button', { name, exact: false }).first().click();
+      await page.waitForTimeout(400);
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      assert.equal(overflow, 0, `${name}: página rola ${overflow}px para o lado`);
+    }
     await closeContext();
   });
 });

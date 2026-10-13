@@ -1,3 +1,4 @@
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import React, { useState } from 'react';
 import { X, PiggyBank, ArrowRight, DollarSign } from 'lucide-react';
 import { useFinance } from '../../context/FinanceContext';
@@ -16,6 +17,7 @@ export const ContributionModal: React.FC<ContributionModalProps> = ({
   onClose,
   goal,
 }) => {
+  useEscapeKey(onClose, isOpen);
   const { accounts = [], addContributionToGoal } = useFinance();
   const { success, error } = useToast();
 

@@ -1,3 +1,4 @@
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import React, { useEffect, useState } from 'react';
 import { X, Landmark, CreditCard, Wallet, TrendingUp } from 'lucide-react';
 import { useFinance } from '../../context/FinanceContext';
@@ -26,6 +27,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
   onClose,
   accountToEdit,
 }) => {
+  useEscapeKey(onClose, isOpen);
   const { addAccount, updateAccount } = useFinance();
   const { success, error } = useToast();
 

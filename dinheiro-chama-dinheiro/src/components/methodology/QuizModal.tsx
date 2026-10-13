@@ -1,3 +1,4 @@
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import React, { useState } from 'react';
 import {
   X,
@@ -24,6 +25,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
   onClose,
   onNavigateToChapter,
 }) => {
+  useEscapeKey(onClose, isOpen);
   const { quizResult, saveQuizResult, retakeQuiz, hasCnpjOrIntends } = useMethodology();
 
   const [currentStep, setCurrentStep] = useState(0); // 0 to 9 for questions, 10 for context, 11 for result

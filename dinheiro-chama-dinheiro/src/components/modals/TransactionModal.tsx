@@ -1,3 +1,4 @@
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import React, { useEffect, useRef, useState } from 'react';
 import { X, Plus, Calendar, DollarSign, Tag, Check, CreditCard, ArrowRightLeft, FileText, Upload, Sparkles } from 'lucide-react';
 import { useFinance } from '../../context/FinanceContext';
@@ -17,6 +18,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   onClose,
   transactionToEdit,
 }) => {
+  useEscapeKey(onClose, isOpen);
   const { accounts = [], addTransaction, updateTransaction } = useFinance();
   const { success, error } = useToast();
 

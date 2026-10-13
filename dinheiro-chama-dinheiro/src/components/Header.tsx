@@ -246,9 +246,10 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => setActiveTab('quiz')}
                 className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold rounded-xl transition-all cursor-pointer shadow-xs"
                 title="Acessar o Diagnóstico dos 5 Níveis"
+                aria-label="Fazer Diagnóstico"
               >
                 <Brain className="w-4 h-4 text-amber-600" />
-                <span className="hidden sm:inline">Fazer Diagnóstico</span>
+                <span className="hidden 2xl:inline">Fazer Diagnóstico</span>
               </button>
             )}
 
@@ -258,9 +259,10 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => setActiveTab('jesus_method')}
               className="inline-flex items-center gap-1.5 px-3 py-2 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer"
               title="Acessar Método JESUS & Dívidas"
+              aria-label="Método JESUS"
             >
               <HeartHandshake className="w-4 h-4 stroke-[2.2]" />
-              <span className="hidden sm:inline">Método JESUS</span>
+              <span className="hidden 2xl:inline">Método JESUS</span>
               <span className="sm:hidden">JESUS</span>
             </button>
 

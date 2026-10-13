@@ -1,3 +1,4 @@
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import React, { useState } from 'react';
 import { X, ArrowRightLeft, Calendar } from 'lucide-react';
 import { useFinance } from '../../context/FinanceContext';
@@ -10,6 +11,7 @@ interface TransferModalProps {
 }
 
 export const TransferModal: React.FC<TransferModalProps> = ({ isOpen, onClose }) => {
+  useEscapeKey(onClose, isOpen);
   const { accounts = [], transferFunds } = useFinance();
   const { success, error } = useToast();
 

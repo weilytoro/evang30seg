@@ -1,3 +1,4 @@
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import React, { useEffect, useState } from 'react';
 import { X, Target } from 'lucide-react';
 import { useFinance } from '../../context/FinanceContext';
@@ -16,6 +17,7 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({
   onClose,
   budgetToEdit,
 }) => {
+  useEscapeKey(onClose, isOpen);
   const { addBudget, updateBudget, budgets = [] } = useFinance();
   const { success, error } = useToast();
 

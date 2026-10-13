@@ -1,3 +1,4 @@
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import React, { useState } from 'react';
 import {
   X,
@@ -45,6 +46,7 @@ export const JesusMethodModal: React.FC<JesusMethodModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  useEscapeKey(onClose, isOpen);
   const {
     jesusDebts,
     addJesusDebt,

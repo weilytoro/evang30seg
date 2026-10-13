@@ -1,3 +1,4 @@
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import React, { useEffect, useState } from 'react';
 import { X, Target } from 'lucide-react';
 import { useFinance } from '../../context/FinanceContext';
@@ -26,6 +27,7 @@ export const GoalModal: React.FC<GoalModalProps> = ({
   onClose,
   goalToEdit,
 }) => {
+  useEscapeKey(onClose, isOpen);
   const { addGoal, updateGoal } = useFinance();
   const { success, error } = useToast();
 

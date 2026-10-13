@@ -1,3 +1,4 @@
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import React, { useState } from 'react';
 import {
   Shield,
@@ -29,6 +30,7 @@ interface AdminPanelModalProps {
 }
 
 export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({ isOpen, onClose }) => {
+  useEscapeKey(onClose, isOpen);
   const {
     isAdmin,
     setIsAdmin,
