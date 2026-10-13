@@ -294,3 +294,50 @@ describe('segurança e mobile', () => {
     await closeContext();
   });
 });
+
+describe('modais com contas criadas depois do carregamento', () => {
+  test('aporte em meta usa a conta padrão e atualiza o progresso', async () => {
+    const tag = uniqueTag();
+    await openTool('Contas & Cartões');
+    await createAccount(`Conta ${tag}`, '1000');
+
+    await openTool('Orçamentos & Metas');
+    await page.getByRole('button', { name: 'Criar Nova Meta', exact: false }).first().click();
+    await page.waitForTimeout(400);
+    await page.getByPlaceholder('Ex: Reserva de Emergência 6 Meses').fill(`Meta ${tag}`);
+    await page.getByPlaceholder('Ex: 30000,00').fill('5000');
+    await page.locator('form button[type=submit]').first().click();
+    await page.waitForTimeout(500);
+
+    // Sem mexer na conta: o modal deve usar a conta criada depois do primeiro render.
+    await page.getByRole('button', { name: 'Fazer Aporte', exact: false }).first().click();
+    await page.waitForTimeout(400);
+    await page.locator('input[type=number]').first().fill('300');
+    await page.locator('form button[type=submit]').first().click();
+    await page.waitForTimeout(500);
+
+    const text = await mainText();
+    const goalIdx = text.indexOf(`Meta ${tag}`);
+    assert.ok(goalIdx >= 0, 'meta deve aparecer');
+    assert.ok(text.slice(goalIdx, goalIdx + 120).includes('R$ 300,00'), 'progresso da meta deve mostrar R$ 300,00');
+    assert.equal(pageErrors.length, 0, pageErrors.join('\n'));
+    await closeContext();
+  });
+
+  test('transferência com seleção padrão move o saldo entre as contas', async () => {
+    const tag = uniqueTag();
+    await openTool('Contas & Cartões');
+    await createAccount(`ContaA ${tag}`, '1000');
+    await createAccount(`ContaB ${tag}`, '1000');
+
+    await page.getByRole('button', { name: 'Transferir', exact: false }).first().click();
+    await page.waitForTimeout(400);
+    await page.locator('input[type=number]').first().fill('200');
+    await page.locator('form button[type=submit]').first().click();
+    await page.waitForTimeout(500);
+
+    const text = await mainText();
+    assert.ok(text.includes('800,00') && text.includes('1.200,00'), 'saldos devem ser R$ 800,00 e R$ 1.200,00');
+    await closeContext();
+  });
+});

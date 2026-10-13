@@ -30,7 +30,7 @@ interface FinanceContextType {
   addAccount: (acc: Omit<Account, 'id'>) => void;
   updateAccount: (id: string, acc: Partial<Account>) => void;
   deleteAccount: (id: string) => void;
-  transferFunds: (fromAccountId: string, toAccountId: string, amount: number, description: string, date: string) => void;
+  transferFunds: (fromAccountId: string, toAccountId: string, amount: number, description: string, date: string) => boolean;
 
   addBudget: (b: Omit<Budget, 'id'>) => void;
   updateBudget: (id: string, b: Partial<Budget>) => void;
@@ -39,7 +39,7 @@ interface FinanceContextType {
   addGoal: (g: Omit<FinancialGoal, 'id'>) => void;
   updateGoal: (id: string, g: Partial<FinancialGoal>) => void;
   deleteGoal: (id: string) => void;
-  addContributionToGoal: (goalId: string, amount: number, accountId: string) => void;
+  addContributionToGoal: (goalId: string, amount: number, accountId: string) => boolean;
 
   resetToDemoData: () => void;
   clearAllData: () => void;
@@ -219,9 +219,9 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     amount: number,
     description: string,
     date: string
-  ) => {
-    if (fromAccountId === toAccountId || amount <= 0) return;
-    if (!storedAccounts.some((account) => account.id === fromAccountId) || !storedAccounts.some((account) => account.id === toAccountId)) return;
+  ): boolean => {
+    if (fromAccountId === toAccountId || amount <= 0) return false;
+    if (!storedAccounts.some((account) => account.id === fromAccountId) || !storedAccounts.some((account) => account.id === toAccountId)) return false;
 
     addTransaction({
       description: description || 'Transferência entre Contas',
@@ -234,6 +234,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
       paymentMethod: 'transfer',
       status: 'completed',
     });
+    return true;
   };
 
   const addBudget = (budget: Omit<Budget, 'id'>) => setBudgets((prev) => [...prev, { ...budget, id: createId('budget') }]);
@@ -244,9 +245,9 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const updateGoal = (id: string, fields: Partial<FinancialGoal>) => setGoals((prev) => prev.map((goal) => goal.id === id ? { ...goal, ...fields } : goal));
   const deleteGoal = (id: string) => setGoals((prev) => prev.filter((goal) => goal.id !== id));
 
-  const addContributionToGoal = (goalId: string, amount: number, accountId: string) => {
+  const addContributionToGoal = (goalId: string, amount: number, accountId: string): boolean => {
     const goal = goals.find((item) => item.id === goalId);
-    if (!goal || amount <= 0 || !storedAccounts.some((account) => account.id === accountId)) return;
+    if (!goal || amount <= 0 || !storedAccounts.some((account) => account.id === accountId)) return false;
 
     setGoals((prev) => prev.map((item) => item.id === goalId ? { ...item, currentAmount: item.currentAmount + amount } : item));
     addTransaction({
@@ -259,6 +260,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
       paymentMethod: 'transfer',
       status: 'completed',
     });
+    return true;
   };
 
   // Não há mais dados demonstrativos: reiniciar significa voltar ao estado vazio.

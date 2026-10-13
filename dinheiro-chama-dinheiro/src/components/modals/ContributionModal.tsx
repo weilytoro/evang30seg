@@ -1,5 +1,5 @@
 import { useEscapeKey } from '../../hooks/useEscapeKey';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, PiggyBank, ArrowRight, DollarSign } from 'lucide-react';
 import { useFinance } from '../../context/FinanceContext';
 import { useToast } from '../../context/ToastContext';
@@ -25,6 +25,14 @@ export const ContributionModal: React.FC<ContributionModalProps> = ({
   const [accountId, setAccountId] = useState(accounts?.[0]?.id || '');
   const [localError, setLocalError] = useState('');
 
+  // O modal fica montado o tempo todo: reinicia ao abrir para pegar contas criadas depois do primeiro render.
+  useEffect(() => {
+    if (!isOpen) return;
+    setAccountId(accounts?.[0]?.id || '');
+    setAmount('');
+    setLocalError('');
+  }, [isOpen]);
+
   if (!isOpen || !goal) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -37,7 +45,12 @@ export const ContributionModal: React.FC<ContributionModalProps> = ({
         return;
       }
 
-      addContributionToGoal(goal.id, numAmount, accountId);
+      const saved = addContributionToGoal(goal.id, numAmount, accountId);
+      if (!saved) {
+        setLocalError('Selecione uma conta válida para o aporte.');
+        error('Não foi possível registrar o aporte. Selecione uma conta.');
+        return;
+      }
       success(`Aporte de ${formatCurrency(numAmount)} realizado com sucesso na meta "${goal.title}".`);
       onClose();
     } catch (err) {

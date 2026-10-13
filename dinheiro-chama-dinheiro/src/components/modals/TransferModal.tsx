@@ -1,5 +1,5 @@
 import { useEscapeKey } from '../../hooks/useEscapeKey';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, ArrowRightLeft, Calendar } from 'lucide-react';
 import { useFinance } from '../../context/FinanceContext';
 import { useToast } from '../../context/ToastContext';
@@ -23,6 +23,15 @@ export const TransferModal: React.FC<TransferModalProps> = ({ isOpen, onClose })
   const [description, setDescription] = useState('Transferência entre Contas');
   const [localError, setLocalError] = useState('');
 
+  // O modal fica montado o tempo todo: reinicia ao abrir para pegar contas criadas depois do primeiro render.
+  useEffect(() => {
+    if (!isOpen) return;
+    setFromAccountId(accounts?.[0]?.id || '');
+    setToAccountId(accounts?.[1]?.id || accounts?.[0]?.id || '');
+    setAmount('');
+    setLocalError('');
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -40,7 +49,12 @@ export const TransferModal: React.FC<TransferModalProps> = ({ isOpen, onClose })
         return;
       }
 
-      transferFunds(fromAccountId, toAccountId, numAmount, description.trim(), date);
+      const saved = transferFunds(fromAccountId, toAccountId, numAmount, description.trim(), date);
+      if (!saved) {
+        setLocalError('Selecione contas de origem e destino válidas.');
+        error('Não foi possível realizar a transferência. Verifique as contas.');
+        return;
+      }
       success('Transferência realizada com sucesso.');
       onClose();
     } catch (err) {
