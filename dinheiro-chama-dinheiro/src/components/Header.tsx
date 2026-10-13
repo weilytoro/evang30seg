@@ -135,11 +135,16 @@ export const Header: React.FC<HeaderProps> = ({
   const isFinancialTab = ['transactions', 'accounts', 'budgets', 'reports'].includes(activeTab);
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
+    <header className="sticky top-0 z-30 bg-white/95 border-b border-slate-200/80 transition-all">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
+        {/*
+          Mobile (<640px): uma linha, ações só com ícone.
+          sm+: grade 2 colunas. Linha 1 = título e ação principal; linha 2 = filtro de mês (md+, telas financeiras)
+          e ferramentas com rótulo. Assim os rótulos cabem sem rolagem horizontal, com ou sem a sidebar fixa (lg+).
+        */}
+        <div className="flex items-center gap-2 sm:gap-4 h-16 sm:h-auto sm:grid sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-x-4 sm:gap-y-2 sm:py-2.5">
           {/* 1. Left: Mobile Menu Toggle + Breadcrumbs */}
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex flex-1 items-center gap-3 min-w-0 sm:row-start-1 sm:col-start-1">
             {onToggleMobileSidebar && (
               <button
                 type="button"
@@ -168,7 +173,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* 2. Center: Month Picker (Visible on financial tools) */}
           {isFinancialTab && (
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden md:flex md:row-start-2 md:col-start-1 md:shrink-0 items-center gap-2">
               <div className="relative">
                 <button
                   type="button"
@@ -237,19 +242,19 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           )}
 
-          {/* 3. Right: Action Buttons */}
-          <div className="flex items-center gap-2">
+          {/* 3. Right: Ferramentas (sm+: linha 2) */}
+          <div className="flex items-center gap-2 shrink-0 sm:row-start-2 sm:col-start-2 sm:justify-self-end">
             {/* Direct Diagnóstico Button — Somente se AINDA NÃO FOI FEITO */}
             {!isQuizDone && (
               <button
                 type="button"
                 onClick={() => setActiveTab('quiz')}
-                className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold rounded-xl transition-all cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold rounded-xl transition-all cursor-pointer shadow-xs whitespace-nowrap"
                 title="Acessar o Diagnóstico dos 5 Níveis"
                 aria-label="Fazer Diagnóstico"
               >
                 <Brain className="w-4 h-4 text-amber-600" />
-                <span className="hidden 2xl:inline">Fazer Diagnóstico</span>
+                <span className="hidden sm:inline">Fazer Diagnóstico</span>
               </button>
             )}
 
@@ -257,12 +262,12 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={() => setActiveTab('jesus_method')}
-              className="inline-flex items-center gap-1.5 px-3 py-2 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer whitespace-nowrap"
               title="Acessar Método JESUS & Dívidas"
               aria-label="Método JESUS"
             >
               <HeartHandshake className="w-4 h-4 stroke-[2.2]" />
-              <span className="hidden 2xl:inline">Método JESUS</span>
+              <span className="hidden sm:inline">Método JESUS</span>
               <span className="sm:hidden">JESUS</span>
             </button>
 
@@ -271,7 +276,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 type="button"
                 onClick={onOpenAdminModal}
-                className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer whitespace-nowrap ${
                   isAdmin
                     ? 'bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300 shadow-xs'
                     : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200/90'
@@ -282,12 +287,15 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="hidden md:inline">{isAdmin ? 'Admin Ativo' : 'Admin'}</span>
               </button>
             )}
+          </div>
 
+          {/* 4. Right: Ação principal + menu (sm+: linha 1, alinhada ao título) */}
+          <div className="flex items-center gap-2 shrink-0 sm:row-start-1 sm:col-start-2 sm:justify-self-end">
             {/* Primary Action Button: No celular mostra só o ícone */}
             <button
               type="button"
               onClick={onOpenTransactionModal}
-              className="inline-flex items-center justify-center gap-1.5 p-2 sm:px-3.5 sm:py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-all cursor-pointer shrink-0"
+              className="inline-flex items-center justify-center gap-1.5 p-2 sm:px-3.5 sm:py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-all cursor-pointer shrink-0 whitespace-nowrap"
               title="Novo Lançamento Financeiro"
             >
               <PlusCircle className="w-4 h-4 stroke-[2.2]" />
