@@ -17,6 +17,7 @@ import {
 import { useJourney } from '../../context/JourneyContext';
 import { formatCurrency } from '../../utils/formatters';
 import { calculateCashflow, calculateDRE, calculatePrice } from '../../utils/bizCalc';
+import { toISODateLocal, todayISO } from '../../utils/dateLocal';
 
 interface ToolsStepProps {
   onAdvanceToStep4: () => void;
@@ -67,7 +68,7 @@ export const ToolsStep: React.FC<ToolsStepProps> = ({ onAdvanceToStep4 }) => {
   const [taxPerc, setTaxPerc] = useState('6');
 
   // Fluxo de Caixa Entry Form Local State
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = todayISO();
   const [entryDate, setEntryDate] = useState(todayStr);
   const [entryType, setEntryType] = useState<'entrada' | 'saida'>('entrada');
   const [entryDesc, setEntryDesc] = useState('');
@@ -140,7 +141,7 @@ export const ToolsStep: React.FC<ToolsStepProps> = ({ onAdvanceToStep4 }) => {
     if (targetPaymentDate < today) {
       targetPaymentDate = new Date(today.getFullYear(), today.getMonth() + 1, proLaborePaymentDay);
     }
-    const dateFormatted = targetPaymentDate.toISOString().split('T')[0];
+    const dateFormatted = toISODateLocal(targetPaymentDate);
 
     addCashflowEntry({
       date: dateFormatted,

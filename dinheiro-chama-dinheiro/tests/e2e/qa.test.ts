@@ -50,6 +50,16 @@ const openTool = async (name: string) => {
 
 const mainText = async () => page.locator('main').first().innerText();
 
+const createExpense = async (description: string, amount: string) => {
+  await page.getByRole('button', { name: 'Novo Lançamento', exact: false }).first().click();
+  await page.waitForTimeout(400);
+  await page.locator('input[type=text][placeholder*="Supermercado"]').fill(description);
+  await page.locator('input[type=number]').first().fill(amount);
+  await page.locator('select').nth(2).selectOption({ index: 0 });
+  await page.getByRole('button', { name: 'Cadastrar Lançamento', exact: false }).first().click();
+  await page.waitForTimeout(500);
+};
+
 const createAccount = async (name: string, openingBalance: string) => {
   await page.getByRole('button', { name: 'Nova Conta', exact: false }).first().click();
   await page.waitForTimeout(400);
@@ -222,6 +232,65 @@ describe('regressões de UI corrigidas no QA', () => {
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       assert.equal(overflow, 0, `${name}: página rola ${overflow}px para o lado`);
     }
+    await closeContext();
+  });
+});
+
+describe('fuso horário', () => {
+  test('data padrão do lançamento é o dia local, mesmo depois das 21h em Brasília', async () => {
+    // Contexto próprio: fuso de Brasília e relógio fixado em 23h30 de 8/10/2026 (02h30 UTC do dia 9).
+    const tzContext = await browser.newContext({ viewport: { width: 1280, height: 900 }, timezoneId: 'America/Sao_Paulo' });
+    const tzPage = await tzContext.newPage();
+    await tzPage.clock.setFixedTime(new Date('2026-10-08T23:30:00-03:00'));
+    await tzPage.goto(BASE_URL, { waitUntil: 'load', timeout: 60000 });
+    await tzPage.waitForTimeout(500);
+    await tzPage.getByRole('button', { name: 'Novo Lançamento', exact: false }).first().click();
+    await tzPage.waitForTimeout(400);
+    assert.equal(await tzPage.locator('input[type=date]').first().inputValue(), '2026-10-08');
+    await tzContext.close();
+  });
+});
+
+describe('segurança e mobile', () => {
+  test('exportar PDF não executa HTML vindo da descrição de um lançamento', async () => {
+    const tag = uniqueTag();
+    await openTool('Contas & Cartões');
+    await createAccount(`Conta ${tag}`, '500');
+    const payload = `<img src=x onerror="document.body.setAttribute('data-xss','1')">Mercado ${tag}`;
+    await createExpense(payload, '10');
+
+    await openTool('Lançamentos & Extrato');
+    await page.getByRole('button', { name: 'Exportar PDF', exact: false }).first().click();
+    await page.waitForTimeout(300);
+    const popupPromise = page.waitForEvent('popup', { timeout: 8000 });
+    await page.getByRole('button', { name: 'Somente Despesas', exact: false }).first().click();
+    const popup = await popupPromise;
+    await popup.waitForTimeout(600);
+
+    assert.equal(await popup.evaluate(() => document.body.getAttribute('data-xss')), null, 'script da descrição não deve executar');
+    assert.ok((await popup.content()).includes(`Mercado ${tag}`), 'texto da descrição deve continuar aparecendo, escapado');
+    await closeContext();
+  });
+
+  test('menu mobile abre a sidebar e navega para a tela escolhida', async () => {
+    await context.close();
+    context = await browser.newContext({ viewport: { width: 375, height: 800 } });
+    page = await context.newPage();
+    page.on('pageerror', (e) => pageErrors.push(e.message));
+    await page.goto(BASE_URL, { waitUntil: 'load', timeout: 60000 });
+    await page.waitForTimeout(500);
+
+    await page.getByRole('button', { name: 'Abrir menu lateral' }).click();
+    await page.waitForTimeout(400);
+    const tools = page.getByText('FERRAMENTAS DE GESTÃO', { exact: false }).first();
+    await tools.click();
+    await page.getByRole('button', { name: 'Contas & Cartões', exact: false }).first().click();
+    await page.waitForTimeout(500);
+
+    const header = await page.locator('header').first().innerText();
+    assert.match(header, /CONTAS & CARTÕES/i, 'cabeçalho deve mostrar a tela escolhida');
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), 0, 'sem rolagem horizontal no celular');
+    assert.equal(pageErrors.length, 0, pageErrors.join('\n'));
     await closeContext();
   });
 });

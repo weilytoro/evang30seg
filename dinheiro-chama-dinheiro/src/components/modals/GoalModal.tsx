@@ -4,6 +4,7 @@ import { X, Target } from 'lucide-react';
 import { useFinance } from '../../context/FinanceContext';
 import { useToast } from '../../context/ToastContext';
 import { FinancialGoal } from '../../types/finance';
+import { toISODateLocal } from '../../utils/dateLocal';
 
 interface GoalModalProps {
   isOpen: boolean;
@@ -54,7 +55,7 @@ export const GoalModal: React.FC<GoalModalProps> = ({
         setCurrentAmount('0');
         const nextYear = new Date();
         nextYear.setFullYear(nextYear.getFullYear() + 1);
-        setDeadline(nextYear.toISOString().split('T')[0]);
+        setDeadline(toISODateLocal(nextYear));
         setCategory('Segurança');
         setColor(colorPalette[0]);
       }

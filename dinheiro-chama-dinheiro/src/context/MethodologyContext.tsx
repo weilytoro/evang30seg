@@ -15,6 +15,7 @@ import {
   PlatformMode,
   QuizResult,
 } from '../types/methodology';
+import { todayISO } from '../utils/dateLocal';
 
 interface MethodologyContextType {
   // Modes & Navigation
@@ -287,7 +288,7 @@ export const MethodologyProvider: React.FC<{ children: React.ReactNode }> = ({ c
           level: quizResult.level,
           title: quizResult.title,
           score: quizResult.totalScore,
-          reachedAt: quizResult.completedAt || new Date().toISOString().split('T')[0],
+          reachedAt: quizResult.completedAt || todayISO(),
           daysAtLevel: undefined,
         };
 
@@ -361,7 +362,7 @@ export const MethodologyProvider: React.FC<{ children: React.ReactNode }> = ({ c
       keyChapter = 6;
     }
 
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = todayISO();
 
     const newResult: QuizResult = {
       totalScore: score,

@@ -6,6 +6,7 @@ import { useToast } from '../../context/ToastContext';
 import { PaymentMethod, Transaction, TransactionStatus, TransactionType } from '../../types/finance';
 import { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } from '../../utils/formatters';
 import { extractFromDocumentText } from '../../utils/fileParser';
+import { todayISO } from '../../utils/dateLocal';
 
 interface TransactionModalProps {
   isOpen: boolean;
@@ -25,7 +26,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   const [type, setType] = useState<TransactionType>('expense');
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(todayISO());
   const [category, setCategory] = useState('');
   const [accountId, setAccountId] = useState(accounts?.[0]?.id || '');
   const [targetAccountId, setTargetAccountId] = useState(accounts?.[1]?.id || '');
@@ -100,7 +101,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
         setType(transactionToEdit.type || 'expense');
         setDescription(transactionToEdit.description || '');
         setAmount(transactionToEdit.amount !== undefined ? transactionToEdit.amount.toString() : '');
-        setDate(transactionToEdit.date || new Date().toISOString().split('T')[0]);
+        setDate(transactionToEdit.date || todayISO());
         setCategory(transactionToEdit.category || '');
         setAccountId(transactionToEdit.accountId || accounts?.[0]?.id || '');
         setTargetAccountId(transactionToEdit.targetAccountId || accounts?.[1]?.id || '');
@@ -119,7 +120,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
         setType('expense');
         setDescription('');
         setAmount('');
-        setDate(new Date().toISOString().split('T')[0]);
+        setDate(todayISO());
         setCategory(DEFAULT_EXPENSE_CATEGORIES?.[0]?.name || 'Outros');
         setAccountId(accounts?.[0]?.id || '');
         setTargetAccountId(accounts?.[1]?.id || accounts?.[0]?.id || '');

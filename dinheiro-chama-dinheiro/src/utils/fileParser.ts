@@ -1,4 +1,5 @@
 import { ParsedRawTransaction, Transaction, TransactionType } from '../types/finance';
+import { todayISO } from './dateLocal';
 
 // Auto-categorization keywords
 const CATEGORY_RULES: { keywords: string[]; category: string; type: TransactionType }[] = [
@@ -157,7 +158,7 @@ export function parseAmount(val: string): number {
 // Normalize Date to YYYY-MM-DD
 export function parseDate(val: string): string {
   if (!val) {
-    return new Date().toISOString().split('T')[0];
+    return todayISO();
   }
   const clean = val.trim();
 
@@ -187,7 +188,7 @@ export function parseDate(val: string): string {
   }
 
   // Fallback to today
-  return new Date().toISOString().split('T')[0];
+  return todayISO();
 }
 
 /**
@@ -451,7 +452,7 @@ export function extractFromDocumentText(
   const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
 
   // 1. Identificar Data (procura formatos comuns DD/MM/AAAA, DD-MM-AAAA ou AAAA-MM-DD)
-  let identifiedDate = new Date().toISOString().split('T')[0];
+  let identifiedDate = todayISO();
   const dateMatch = text.match(/\b(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})\b/);
   if (dateMatch) {
     const day = dateMatch[1].padStart(2, '0');
@@ -508,6 +509,15 @@ export function extractFromDocumentText(
  * com layout elegante em Branco e Dourado, permitindo filtrar por:
  * 'all' (Todos), 'income' (Receita), 'expense' (Despesa) ou 'transfer' (Transferência).
  */
+// Valores de lançamento vêm do usuário ou de importação de extrato: escape antes de montar HTML.
+export const escapeHtml = (value: string): string =>
+  String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 export function exportToPDF(
   transactions: Transaction[],
   typeFilter: 'all' | 'income' | 'expense' | 'transfer' = 'all',
@@ -541,9 +551,9 @@ export function exportToPDF(
     .map(
       (t) => `
       <tr style="border-bottom: 1px solid #f1f5f9;">
-        <td style="padding: 10px 12px; font-size: 12px; color: #475569;">${t.date.split('-').reverse().join('/')}</td>
-        <td style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #0f172a;">${t.description}</td>
-        <td style="padding: 10px 12px; font-size: 12px; color: #64748b;">${t.category}</td>
+        <td style="padding: 10px 12px; font-size: 12px; color: #475569;">${escapeHtml(t.date.split('-').reverse().join('/'))}</td>
+        <td style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #0f172a;">${escapeHtml(t.description)}</td>
+        <td style="padding: 10px 12px; font-size: 12px; color: #64748b;">${escapeHtml(t.category)}</td>
         <td style="padding: 10px 12px; font-size: 11px;">
           <span style="display: inline-block; padding: 2px 8px; border-radius: 999px; font-weight: 700; ${
             t.type === 'income'
@@ -573,7 +583,7 @@ export function exportToPDF(
     <html lang="pt-BR">
     <head>
       <meta charset="utf-8">
-      <title>${title} — Dinheiro Chama Dinheiro?</title>
+      <title>${escapeHtml(title)} — Dinheiro Chama Dinheiro?</title>
       <style>
         body {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;

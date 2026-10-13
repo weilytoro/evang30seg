@@ -15,6 +15,7 @@ import {
 } from '../types/journey';
 import { useMethodology } from './MethodologyContext';
 import { getEntryModuleFromKeyChapter, pickNextModule } from '../utils/journeyNav';
+import { todayISO } from '../utils/dateLocal';
 
 export interface ModuleCriterionState {
   id: string;
@@ -803,7 +804,7 @@ export const JourneyProvider: React.FC<{ children: React.ReactNode }> = ({ child
     levelTitle: string,
     hasCnpj: boolean
   ) => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = todayISO();
     const entry: QuizHistoryEntry = {
       score,
       level,

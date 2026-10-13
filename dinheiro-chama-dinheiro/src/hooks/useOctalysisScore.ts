@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Transaction, Budget } from '../types/finance';
+import { todayISO } from '../utils/dateLocal';
 
 export interface OctalysisMetrics {
   epicMeaning: number;
@@ -99,7 +100,7 @@ export const useOctalysisScore = ({
     // ============================================
     // 6️⃣ SCARCITY - Streak de dias com transações
     // ============================================
-    const today = new Date().toISOString().split('T')[0];
+    const today = todayISO();
     const uniqueDates = new Set(transactions.map((t) => t.date)).size;
 
     // Calcular streak real

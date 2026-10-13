@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Transaction, Budget } from '../types/finance';
+import { todayISO } from '../utils/dateLocal';
 
 interface GameificationStats {
   totalXP: number;
@@ -37,7 +38,7 @@ export const useGameification = (
 ): GameificationStats => {
   const stats = useMemo(() => {
     // Calculate total XP from transactions
-    const today = new Date().toISOString().split('T')[0];
+    const today = todayISO();
     let totalXP = 0;
     let xpGainedToday = 0;
 

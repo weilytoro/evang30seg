@@ -36,6 +36,7 @@ import { OctalysisRadar } from '../common/OctalysisRadar';
 import { TRILHA1_MODULES } from '../../data/journeyData';
 import { getBrand } from '../../utils/brand';
 import { formatCurrency, formatDate } from '../../utils/formatters';
+import { currentMonthISO } from '../../utils/dateLocal';
 
 interface DashboardViewProps {
   setActiveTab: (tab: string) => void;
@@ -86,7 +87,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     goals = [],
     budgets = [],
     pendingPayables = [],
-    selectedMonth = new Date().toISOString().substring(0, 7),
+    selectedMonth = currentMonthISO(),
   } = useFinance();
 
   // Octalysis system - Real progress tracking

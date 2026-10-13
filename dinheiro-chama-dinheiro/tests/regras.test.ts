@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { deriveAccounts, normalizeAccounts } from '../src/utils/financeBalances';
+import { toISODateLocal } from '../src/utils/dateLocal';
+import { escapeHtml } from '../src/utils/fileParser';
 import type { Account, Transaction } from '../src/types/finance';
 
 const account = (over: Partial<Account>): Account =>
@@ -67,4 +69,23 @@ test('normalizeAccounts: conta já migrada (initialBalance definido) é preserva
 
 test('normalizeAccounts: entrada inválida vira lista vazia', () => {
   assert.deepEqual(normalizeAccounts(undefined as unknown as Account[]), []);
+});
+
+test('toISODateLocal: 23h30 em Brasília continua no dia de hoje (não cai para o dia seguinte em UTC)', () => {
+  // Fixa o fuso antes de criar as datas. Node reaplica TZ em tempo de execução.
+  process.env.TZ = 'America/Sao_Paulo';
+  const lateEvening = new Date(2026, 9, 8, 23, 30);
+  assert.equal(toISODateLocal(lateEvening), '2026-10-08');
+  // Referência do bug: toISOString() dá o dia seguinte nesse horário.
+  assert.equal(lateEvening.toISOString().split('T')[0], '2026-10-09');
+});
+
+test('escapeHtml: descrição com HTML não vira marcação executável no PDF', () => {
+  const payload = '<img src=x onerror="alert(1)">Mercado & "Cia" \'x\'';
+  const escaped = escapeHtml(payload);
+  assert.ok(!escaped.includes('<img'), 'tag não pode sobreviver');
+  assert.ok(escaped.includes('&lt;img'));
+  assert.ok(escaped.includes('&amp;'));
+  assert.ok(escaped.includes('&quot;Cia&quot;'));
+  assert.ok(escaped.includes('&#39;x&#39;'));
 });

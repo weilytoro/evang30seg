@@ -4,6 +4,7 @@ import { X, ArrowRightLeft, Calendar } from 'lucide-react';
 import { useFinance } from '../../context/FinanceContext';
 import { useToast } from '../../context/ToastContext';
 import { formatCurrency } from '../../utils/formatters';
+import { todayISO } from '../../utils/dateLocal';
 
 interface TransferModalProps {
   isOpen: boolean;
@@ -18,7 +19,7 @@ export const TransferModal: React.FC<TransferModalProps> = ({ isOpen, onClose })
   const [fromAccountId, setFromAccountId] = useState(accounts?.[0]?.id || '');
   const [toAccountId, setToAccountId] = useState(accounts?.[1]?.id || accounts?.[0]?.id || '');
   const [amount, setAmount] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(todayISO());
   const [description, setDescription] = useState('Transferência entre Contas');
   const [localError, setLocalError] = useState('');
 

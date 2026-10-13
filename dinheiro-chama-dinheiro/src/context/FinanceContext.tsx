@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import { INITIAL_ACCOUNTS, INITIAL_BUDGETS, INITIAL_GOALS, INITIAL_TRANSACTIONS } from '../data/initialData';
 import { Account, Budget, FinancialGoal, ParsedRawTransaction, Transaction } from '../types/finance';
 import { deriveAccounts, normalizeAccounts } from '../utils/financeBalances';
+import { todayISO } from '../utils/dateLocal';
 
 interface FinanceContextType {
   accounts: Account[];
@@ -67,7 +68,7 @@ const STORAGE_KEYS = {
   GOALS: 'finansmart_goals_v3',
 };
 
-const today = () => new Date().toISOString().split('T')[0];
+const today = () => todayISO();
 const createId = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
 const readStorage = <T,>(key: string, fallback: T): T => {
