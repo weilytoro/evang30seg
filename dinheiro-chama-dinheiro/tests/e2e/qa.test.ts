@@ -316,7 +316,7 @@ describe('modais com contas criadas depois do carregamento', () => {
     await page.locator('form button[type=submit]').first().click();
     await page.waitForTimeout(500);
 
-    const text = await mainText();
+    const text = (await mainText()).replace(/\s+/g, ' ');
     const goalIdx = text.indexOf(`Meta ${tag}`);
     assert.ok(goalIdx >= 0, 'meta deve aparecer');
     assert.ok(text.slice(goalIdx, goalIdx + 120).includes('R$ 300,00'), 'progresso da meta deve mostrar R$ 300,00');
